@@ -1,0 +1,21 @@
+
+
+#Produtos
+Só pode editar se nao tiver pedido com eles
+
+
+
+
+
+
+
+
+
+1) Ver como gerar um build do projeto para rodar direto no celular<br>
+2) Como hospedar em algum servidor
+3) Fazer uma tela de Cardapio no web
+4) Arrumar a tela de detalhes do pedido para ficar mais bonito visualmente
+5) Pagina para listar/editar/deletar produtos 
+6) Pagina para listar/editar/deletar produtos 
+7) Só pode ter uma mesa com aquele numero em aberto ao mesmo tempo ( verificar no banco se nao existe aquela mesa com o status de 'rascunho' )
+
