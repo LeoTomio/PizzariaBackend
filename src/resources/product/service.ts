@@ -26,6 +26,12 @@ export class ProductService {
                     id: true,
                     name: true,
                     price: true,
+                    category: {
+                        select: {
+
+                            name: true
+                        }
+                    },
                     category_id: true,
                     description: true,
                     banner: true
@@ -45,9 +51,6 @@ export class ProductService {
             return await prismaClient.product.create({
                 data: {
                     ...response
-                },
-                select: {
-                    id: true,
                 }
             })
         } catch (error) {
@@ -58,18 +61,18 @@ export class ProductService {
 
     async Edit(response: Product) {
         try {
-            await prismaClient.product.update({
+            return await prismaClient.product.update({
                 data: {
                     name: response.name,
                     description: response.description,
                     price: response.price,
+                    banner: response.banner,
                     updated_at: moment().toDate()
                 },
                 where: {
                     id: response.id,
                 }
             })
-            return new ApiResponse('Produto Atualizado', 200)
         } catch (error) {
             console.log(error)
             return error
