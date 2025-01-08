@@ -1,3 +1,5 @@
+import { Type } from "@prisma/client";
+
 interface PayLoad {
     sub: string
 }
@@ -7,6 +9,7 @@ interface UserRequest {
     name: string;
     email: string;
     password: string;
+    type: Type
 }
 
 interface AuthRequest {
@@ -14,4 +17,13 @@ interface AuthRequest {
     password: string
 }
 
-export { PayLoad, UserRequest, AuthRequest }
+interface Token {
+    name: string,
+    email: string,
+    type: string,
+    company_id: string
+}
+
+export { PayLoad, UserRequest, AuthRequest, Token }
+
+

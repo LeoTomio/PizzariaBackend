@@ -1,11 +1,14 @@
+import { loginJwt } from './../../middlewares/loginJwt';
 import { Request, Response } from "express";
 import { CategoryService } from "./service";
+import { tokenDecodifier } from '../../utils/tokenDecodify';
+import { Token } from '../user/interface';
 
 
 export class CategoryController {
 
     async GetOne(request: Request, response: Response) {
-        try { 
+        try {
             return await new CategoryService().GetOne(request.params.id).then((data) => {
                 return response.status(data.statusCode || 200).send(data)
             })
@@ -15,7 +18,9 @@ export class CategoryController {
     }
     async List(request: Request, response: Response) {
         try {
-            return await new CategoryService().List().then((data) => {
+            const token = tokenDecodifier(request.headers.authorization) as Token
+
+            return await new CategoryService().List(token).then((data) => {
                 return response.status(data.statusCode || 200).send(data)
             })
         } catch (error) {
@@ -24,7 +29,8 @@ export class CategoryController {
     }
     async Create(request: Request, response: Response) {
         try {
-            return await new CategoryService().Create(request.body).then((data) => {
+            const token = tokenDecodifier(request.headers.authorization) as Token
+            return await new CategoryService().Create(request.body, token).then((data) => {
                 return response.status(data.statusCode || 200).send(data)
             })
         } catch (error) {

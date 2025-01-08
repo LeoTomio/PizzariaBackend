@@ -1,34 +1,35 @@
 import { Request, Response } from "express";
-import { AuthUserService, CreateUserService, DetailUserService } from "./service";
+import { UserService } from "./service";
 
-class DetailuserController {
-    async handle(request: Request, response: Response) {
+export class UserController {
+    async detailUser(request: Request, response: Response) {
+        try {
+            return await new UserService().DetailUser(request.user_id).then((data) => {
+                return response.status(data.statusCode || 200).send(data)
+            })
+        } catch (error) {
+            return response.status(error.statusCode || 500).send(error)
+        }
+    }
 
-        const user_id = request.user_id
-        const detailUserService = new DetailUserService();
-        const user = await detailUserService.execute(user_id)
+    async createUser(request: Request, response: Response) {
+        try {
+            return await new UserService().CreateUser(request.body).then((data) => {
+                return response.json(data)
+            })
+        } catch (error) {
+            return response.status(error.statusCode || 500).send(error)
+        }
+    }
 
-        return response.json(user);
+    async authUser(request: Request, response: Response) {
+        try {
+            return await new UserService().AuthUser(request.body).then((data) => {
+                return response.status(data.statusCode || 200).send(data)
+                
+            })
+        } catch (error) {
+            return response.status(error.statusCode || 500).send(error)
+        }
     }
 }
-
-class CreateUserController {
-    async handle(req: Request, res: Response) {
-
-        const createUserService = new CreateUserService();
-        const user = await createUserService.execute(req.body)
-
-        return res.json(user)
-    }
-}
-
-class AuthUserController {
-    async handle(request: Request, response: Response) {
-
-        const authUserService = new AuthUserService();
-        const auth = await authUserService.execute(request.body)
-        return response.json(auth)
-    }
-}
-
-export { DetailuserController, AuthUserController, CreateUserController }

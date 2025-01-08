@@ -10,15 +10,67 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Type {
+  ADMIN
+  RESTAURANT
+  USER
+}
+
 model User {
   id         String    @id @default(uuid())
   name       String    @unique
   email      String
   password   String
+  type       Type
+  company    Company?  @relation(fields: [company_id], references: [id])
+  company_id String?
   created_at DateTime? @default(now())
   updated_at DateTime? @default(now())
 
   @@map("users")
+}
+
+model Company {
+  id               String           @id @default(uuid())
+  name             String           @unique
+  phone            String
+  address          String
+  withdrawalTime   String
+  deliveryTimeFrom String
+  deliveryTimeTo   String
+  banner           String
+  weekDays         CompanyWeekDay[]
+  created_at       DateTime?        @default(now())
+  updated_at       DateTime?        @default(now())
+  Category         Category[]
+  Order            Order[]
+  User             User[]
+
+  @@map("company")
+}
+
+model WeekDays {
+  id         Int              @id @default(autoincrement())
+  name       String
+  companies  CompanyWeekDay[]
+  created_at DateTime?        @default(now())
+  updated_at DateTime?        @default(now())
+
+  @@map("weekdays")
+}
+
+model CompanyWeekDay {
+  id         Int       @id @default(autoincrement())
+  workHours  String
+  company_id String
+  weekday_id Int
+  company    Company   @relation(fields: [company_id], references: [id])
+  weekday    WeekDays  @relation(fields: [weekday_id], references: [id])
+  created_at DateTime? @default(now())
+  updated_at DateTime? @default(now())
+
+  @@unique([company_id, weekday_id]) // Evita duplicidade na relação
+  @@map("company_weekdays")
 }
 
 model Category {
@@ -26,6 +78,8 @@ model Category {
   name       String    @unique()
   created_at DateTime? @default(now())
   updated_at DateTime? @default(now())
+  company    Company   @relation(fields: [company_id], references: [id])
+  company_id String
   products   Product[]
 
   @@map("categories")
@@ -33,7 +87,7 @@ model Category {
 
 model Product {
   id          String    @id @default(uuid())
-  name        String    @unique()
+  name        String
   price       String
   description String
   banner      String
@@ -56,6 +110,8 @@ model Order {
   created_at DateTime? @default(now())
   updated_at DateTime? @default(now())
   items      Item[]
+  company    Company   @relation(fields: [company_id], references: [id])
+  company_id String
 
   @@map("orders")
 }

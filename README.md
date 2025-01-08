@@ -27,3 +27,14 @@ https://www.figma.com/file/yTPA50bLeQdJOCrg5sAOqU/Pizzaria-Sujeito?node-id=0-1
 * Postgresql
 * Cloudinary - Armazenamento de imagens
 * Neon - banco de dados ( produção )
+
+
+
+### Para atualizar no servidor:
+
+Depois do commit dar o comando: vercel --prod
+
+
+
+
+# ajustar os produtos/orders pra receberem o id da company

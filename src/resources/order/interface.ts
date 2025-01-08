@@ -1,6 +1,7 @@
 interface OrderRequest {
     table: number;
     name: string;
+    company_id:string
 }
 
 

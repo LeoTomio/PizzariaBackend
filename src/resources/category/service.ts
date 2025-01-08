@@ -2,6 +2,7 @@ import { Category } from '@prisma/client';
 import moment from 'moment';
 import { ApiResponse } from '../../config/apiReturn';
 import prismaClient from "../../prisma";
+import { Token } from '../user/interface';
 export class CategoryService {
 
     async GetOne(id: string) {
@@ -20,36 +21,41 @@ export class CategoryService {
             return error
         }
     }
-    async List() {
+    async List(token: Token) {
         try {
             return await prismaClient.category.findMany({
                 select: {
                     id: true,
                     name: true,
                 },
-                orderBy:{
+                where: {
+                    company_id: token.company_id
+                },
+                orderBy: {
                     name: 'asc'
                 }
+
             })
         } catch (error) {
             console.log(error)
             return error
         }
     }
-    async Create(response: Category) {
-        try { 
+    async Create(response: Category, token: Token) {
+        try {
             const { name } = response
             if (name === '') throw new Error('Nome invalido')
 
             return await prismaClient.category.create({
                 data: {
-                    name: name
+                    ...response,
+                    company_id: token.company_id
                 },
                 select: {
                     id: true,
                     name: true
                 }
-            }) 
+            })
         } catch (error) {
             console.log(error)
             return error

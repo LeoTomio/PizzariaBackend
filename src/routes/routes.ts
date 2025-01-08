@@ -1,18 +1,18 @@
 import { Router } from 'express';
 import { tokenValidator } from '../middlewares/verifyToken';
-import { AuthUserController, CreateUserController, DetailuserController } from '../resources/user/controler';
 import CategoryRoutes from './category/index';
 import OrderRoutes from './order/index';
 import ProductRoutes from './product/index';
+import UserRoutes from './users/index'
 const router = Router();
 
 router.get('/status', (request, response) => {
   response.status(200).json({ message: "funcionando" });
 });
-// Rotas user
-router.post('/users', new CreateUserController().handle)
 
-router.post('/session', new AuthUserController().handle)
+// Usuarios
+
+router.use('/user', UserRoutes)
 
 router.use(async (request, response, next) => {
   let verified = await tokenValidator(request);
@@ -23,7 +23,6 @@ router.use(async (request, response, next) => {
   }
 });
 
-router.get('/me', new DetailuserController().handle)
 
 // ---  ROTAS CATEGORY
 

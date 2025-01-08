@@ -1,5 +1,5 @@
 import { Router, Request, Response, NextFunction } from 'express';
-import { decode, loginJwt } from './loginJwt';
+import { loginJwt } from './loginJwt';
 import prismaClient from '../prisma';
 import { PayLoad } from '../resources/user/interface';
 import { verify } from 'jsonwebtoken';

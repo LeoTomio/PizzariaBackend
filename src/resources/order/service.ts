@@ -23,6 +23,7 @@ export class OrderService {
                 data: {
                     table: orderData.table,
                     name: orderData.name,
+                    company_id:orderData.company_id
                 }
             })
 
