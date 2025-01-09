@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { UserService } from "./service";
 
 export class UserController {
@@ -12,10 +12,10 @@ export class UserController {
         }
     }
 
-    async createUser(request: Request, response: Response) {
+    async createUser(request: Request, response: Response, next: NextFunction) {
         try {
-            return await new UserService().CreateUser(request.body).then((data) => {
-                return response.json(data)
+            return await new UserService().CreateUser(request.body, next).then((data) => {
+                return response.status(201).send(data)
             })
         } catch (error) {
             return response.status(error.statusCode || 500).send(error)
@@ -26,7 +26,7 @@ export class UserController {
         try {
             return await new UserService().AuthUser(request.body).then((data) => {
                 return response.status(data.statusCode || 200).send(data)
-                
+
             })
         } catch (error) {
             return response.status(error.statusCode || 500).send(error)

@@ -1,80 +1,83 @@
-
-import { Request, Response } from "express";
-import { ProductService } from "./service";
+import { NextFunction, Request, Response } from "express";
+import { CompanyService } from "./service";
 import { UploadedFile } from "express-fileupload";
-import { moneyFormater } from "../../utils/moneyFormat";
 import { uploadImage } from "../../externalServices/cloudinary";
-export class ProductController {
+
+export class CompanyController {
 
     async GetOne(request: Request, response: Response) {
         try {
-            return await new ProductService().GetOne(String(request.params.id)).then((data) => {
+            console.log(request.params.id)
+            return await new CompanyService().GetOne(request.params.id).then((data) => {
                 return response.status(data.statusCode || 200).send(data)
             })
         } catch (error) {
             return response.status(error.statusCode || 500).send(error)
         }
     }
-
     async List(request: Request, response: Response) {
         try {
-            return await new ProductService().List().then((data) => {
+            return await new CompanyService().List().then((data) => {
                 return response.status(data.statusCode || 200).send(data)
             })
         } catch (error) {
             return response.status(error.statusCode || 500).send(error)
         }
     }
-
-    async Create(request, response) {
+    async Create(request: Request, response: Response, next: NextFunction) {
         try {
             if (!request.files || Object.keys(request.files).length === 0) {
                 throw new Error("Erro ao enviar imagem");
             }
-
             const file = request.files['file'] as UploadedFile;
             const resultFile = await uploadImage(file);
             request.body.banner = resultFile.url;
-            request.body.price = moneyFormater(request.body.price);
 
-            return await new ProductService().Create(request.body).then((data) => {
-                return response.status(data.statusCode || 200).send(data)
+            return await new CompanyService().Create(request.body, next).then((data) => {
+                return response.status(201).send(data)
             })
         } catch (error) {
             return response.status(error.statusCode || 500).send(error)
         }
     }
-
-    async Edit(request: Request, response: Response) {
+    async Edit(request: Request, response: Response, next: NextFunction) {
         try {
-            const isEdit =!request.files && !request.body.file;
+            const isEdit = !request.files && !request.body.file;
             if (isEdit) {
                 throw new Error("Imagem é obrigatória")
             }
 
             if (request.files && Object.keys(request.files).length > 0) {
                 const file = request.files['file'] as UploadedFile;
-
                 const resultFile = await uploadImage(file)
                 request.body.banner = resultFile.url;
-
             }
-            request.body.price = moneyFormater(request.body.price)
-            return await new ProductService().Edit(request.body).then((data) => {
-                return response.status(data.statusCode || 200).send(data)
+            return await new CompanyService().Edit(request.body, next).then((data) => {
+                return response.status(200).send(data);
             })
         } catch (error) {
             return response.status(error.statusCode || 500).send(error)
         }
     }
 
-    async Delete(request: Request, response: Response) {
+    async Delete(request: Request, response: Response, next: NextFunction) {
         try {
-            return await new ProductService().Delete(request.params.id).then((data) => {
-                return response.status(data.statusCode || 200).send(data)
+            return await new CompanyService().Delete(request.params.id, next).then((data) => {
+                return response.status(204).send(data);
             })
         } catch (error) {
             return response.status(error.statusCode || 500).send(error)
         }
     }
+
+    async Inactive(request: Request, response: Response, next: NextFunction) {
+        try {
+            return await new CompanyService().Inactive(request.params.id, next).then((data) => {
+                return response.status(204).send(data);
+            })
+        } catch (error) {
+            return response.status(error.statusCode || 500).send(error)
+        }
+    }
+
 }

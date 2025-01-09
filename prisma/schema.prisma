@@ -39,6 +39,9 @@ model Company {
   deliveryTimeFrom String
   deliveryTimeTo   String
   banner           String
+  instagram        String?
+  facebook         String?
+  isActive         Boolean          @default(true)
   weekDays         CompanyWeekDay[]
   created_at       DateTime?        @default(now())
   updated_at       DateTime?        @default(now())

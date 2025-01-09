@@ -23,24 +23,38 @@ export class CategoryService {
     }
     async List(token: Token) {
         try {
-            return await prismaClient.category.findMany({
+            const categories = await prismaClient.category.findMany({
                 select: {
                     id: true,
                     name: true,
+                    company: !token.company_id ? { select: { name: true } } : false,
                 },
                 where: {
-                    company_id: token.company_id
+                    company_id: token.company_id || undefined,
                 },
                 orderBy: {
-                    name: 'asc'
-                }
+                    name: 'asc',
+                },
+            });
 
-            })
+            return categories.map((category) => {
+                if (category.company) {
+                    return {
+                        ...category,
+                        company: category.company.name,
+                    };
+                }
+                return category;
+            });
         } catch (error) {
-            console.log(error)
-            return error
+            console.log(error);
+            return error;
         }
     }
+
+
+
+
     async Create(response: Category, token: Token) {
         try {
             const { name } = response

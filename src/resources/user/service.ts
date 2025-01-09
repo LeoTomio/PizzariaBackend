@@ -3,6 +3,8 @@ import { hash } from 'bcryptjs'
 import { compare } from "bcryptjs";
 import { sign } from 'jsonwebtoken'
 import { AuthRequest, UserRequest } from "./interface";
+import { NextFunction } from "express";
+import { Prisma } from "@prisma/client";
 
 export class UserService {
     async DetailUser(user_id: string) {
@@ -24,17 +26,19 @@ export class UserService {
         }
     }
 
-    async CreateUser(response: UserRequest) {
+    async CreateUser(response: UserRequest, next: NextFunction) {
         try {
             const { email } = response
-            //Verifica se foi enviado um email
             if (!email) {
                 throw new Error("Email incorreto")
             }
-            //Verifica se esse email já está cadastrado no banco
-            await prismaClient.user.findFirst({ where: { email: email } }).then(async (exists) => {
-                if (exists)
-                    throw new Error('Usuario ja existe')
+
+            await this.FindFirst(email).then((exist) => {
+                if (exist) {
+                    const error: any = new Error("Usuário já existe");
+                    error.statusCode = 409;
+                    throw error;
+                }
             })
             response.password = await hash(response.password, 8)
             return await prismaClient.user.create({
@@ -48,8 +52,7 @@ export class UserService {
                 }
             })
         } catch (error) {
-            console.log(error)
-            return error
+            next(error)
         }
     }
 
@@ -90,5 +93,10 @@ export class UserService {
             console.log(error)
             return error
         }
+    }
+
+
+    async FindFirst(email: string) {
+        return await prismaClient.user.findFirst({ where: { email: email } })
     }
 }

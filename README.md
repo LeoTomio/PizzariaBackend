@@ -38,3 +38,4 @@ Depois do commit dar o comando: vercel --prod
 
 
 # ajustar os produtos/orders pra receberem o id da company
+# ajustar toda a parte de adm, ex: cadastrar categoria, se for adm deverá aparecer o campo da empresa para adicionar

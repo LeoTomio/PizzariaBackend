@@ -1,6 +1,6 @@
 import express from 'express';
 import { verifyTokenLogin } from '../../middlewares/verifyToken';
-import { CategoryController } from '../../resources/category/controler';
+import { CategoryController } from '../../resources/category/controller';
 
 const router = express.Router();
 

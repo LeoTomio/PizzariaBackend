@@ -2,12 +2,12 @@
 
 
 import express from 'express';
-import { UserController } from '../../resources/user/controler';
+import { UserController } from '../../resources/user/controller';
 import { verifyTokenLogin } from '../../middlewares/verifyToken';
 
 const router = express.Router();
 
-router.post('/users', new UserController().createUser)
+router.post('/', new UserController().createUser)
 
 router.post('/session', new UserController().authUser)
 

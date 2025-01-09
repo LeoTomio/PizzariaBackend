@@ -1,9 +1,7 @@
-import { loginJwt } from './../../middlewares/loginJwt';
 import { Request, Response } from "express";
-import { CategoryService } from "./service";
 import { tokenDecodifier } from '../../utils/tokenDecodify';
 import { Token } from '../user/interface';
-
+import { CategoryService } from "./service";
 
 export class CategoryController {
 
@@ -31,7 +29,7 @@ export class CategoryController {
         try {
             const token = tokenDecodifier(request.headers.authorization) as Token
             return await new CategoryService().Create(request.body, token).then((data) => {
-                return response.status(data.statusCode || 200).send(data)
+                return response.status(data.statusCode || 201).send(data)
             })
         } catch (error) {
             return response.status(error.statusCode || 500).send(error)
