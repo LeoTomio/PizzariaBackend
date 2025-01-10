@@ -5,23 +5,22 @@ import { uploadImage } from "../../externalServices/cloudinary";
 
 export class CompanyController {
 
-    async GetOne(request: Request, response: Response) {
+    async GetOne(request: Request, response: Response, next: NextFunction) {
         try {
-            console.log(request.params.id)
             return await new CompanyService().GetOne(request.params.id).then((data) => {
-                return response.status(data.statusCode || 200).send(data)
+                return response.status(200).send(data)
             })
         } catch (error) {
-            return response.status(error.statusCode || 500).send(error)
+            next(error)
         }
     }
-    async List(request: Request, response: Response) {
+    async List(request: Request, response: Response, next: NextFunction) {
         try {
             return await new CompanyService().List().then((data) => {
-                return response.status(data.statusCode || 200).send(data)
+                return response.status(200).send(data)
             })
         } catch (error) {
-            return response.status(error.statusCode || 500).send(error)
+            next(error)
         }
     }
     async Create(request: Request, response: Response, next: NextFunction) {
@@ -33,11 +32,11 @@ export class CompanyController {
             const resultFile = await uploadImage(file);
             request.body.banner = resultFile.url;
 
-            return await new CompanyService().Create(request.body, next).then((data) => {
+            return await new CompanyService().Create(request.body).then((data) => {
                 return response.status(201).send(data)
             })
         } catch (error) {
-            return response.status(error.statusCode || 500).send(error)
+            next(error)
         }
     }
     async Edit(request: Request, response: Response, next: NextFunction) {
@@ -52,31 +51,31 @@ export class CompanyController {
                 const resultFile = await uploadImage(file)
                 request.body.banner = resultFile.url;
             }
-            return await new CompanyService().Edit(request.body, next).then((data) => {
+            return await new CompanyService().Edit(request.body).then((data) => {
                 return response.status(200).send(data);
             })
         } catch (error) {
-            return response.status(error.statusCode || 500).send(error)
+            next(error)
         }
     }
 
     async Delete(request: Request, response: Response, next: NextFunction) {
         try {
-            return await new CompanyService().Delete(request.params.id, next).then((data) => {
+            return await new CompanyService().Delete(request.params.id).then((data) => {
                 return response.status(204).send(data);
             })
         } catch (error) {
-            return response.status(error.statusCode || 500).send(error)
+            next(error)
         }
     }
 
-    async Inactive(request: Request, response: Response, next: NextFunction) {
+    async changeStatus(request: Request, response: Response, next: NextFunction) {
         try {
-            return await new CompanyService().Inactive(request.params.id, next).then((data) => {
-                return response.status(204).send(data);
+            return await new CompanyService().changeStatus(request.params.id).then((data) => {
+                return response.status(200).send(data);
             })
         } catch (error) {
-            return response.status(error.statusCode || 500).send(error)
+            next(error)
         }
     }
 

@@ -2,20 +2,17 @@ import { Prisma } from "@prisma/client";
 import multer from "multer";
 
 export default function errorHandler(err, req, res, next) {
-    // logger.error(err);   //caso queira usar, instalar winston
-
     const { status, message } = getExceptionResponse(err);
 
-    res.status(status).json({
+    return res.status(status).json({
         status,
-        statusText: message || "Ocorreu um erro",
+        message: message || "Ocorreu um erro",
     });
 }
 
 function getExceptionResponse(exception) {
     let status;
     let message;
-
     if (exception.name === 'UnauthorizedError') {
         status = 401;
         message = 'Token inválido ou ausente.';
@@ -33,6 +30,12 @@ function getExceptionResponse(exception) {
                 status = 400;
                 message = exception.message;
                 break;
+        }
+    } else if (exception instanceof Prisma.PrismaClientValidationError) {
+        status = 400;
+        message = 'Erro de validação de dados fornecidos.';
+        if (exception.message) {
+            message = exception.message;
         }
     } else if (exception instanceof multer.MulterError) {
         status = 400;
@@ -52,5 +55,3 @@ function getExceptionResponse(exception) {
     })
     return { status, message };
 }
-
-module.exports = errorHandler;
