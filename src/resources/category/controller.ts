@@ -38,7 +38,7 @@ export class CategoryController {
     async Edit(request: Request, response: Response, next: NextFunction) {
         try {
             return await new CategoryService().Edit(request.body).then((data) => {
-                return response.status(data.statusCode || 200).send(data);
+                return response.status(200).send(data);
             })
         } catch (error) {
             next(error)
@@ -47,7 +47,7 @@ export class CategoryController {
     async Delete(request: Request, response: Response, next: NextFunction) {
         try {
             return await new CategoryService().Delete(request.params.id).then((data) => {
-                return response.status(data.statusCode || 204).send(data);
+                return response.status(204).send(data);
             })
         } catch (error) {
             next(error)
