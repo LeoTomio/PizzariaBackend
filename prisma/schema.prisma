@@ -89,14 +89,15 @@ model Category {
 }
 
 model Product {
-  id          String    @id @default(uuid())
-  name        String
-  price       String
-  description String
-  banner      String
-  unity       Int       @default(1)
-  created_at  DateTime? @default(now())
-  updated_at  DateTime? @default(now())
+  id                String    @id @default(uuid())
+  name              String
+  price             String
+  promotional_price String?
+  description       String
+  banner            String
+  unity             Int       @default(1)
+  created_at        DateTime? @default(now())
+  updated_at        DateTime? @default(now())
 
   category    Category @relation(fields: [category_id], references: [id])
   category_id String

@@ -65,7 +65,6 @@ export class ProductController {
                 request.body.banner = resultFile.url;
 
             }
-            request.body.price = moneyFormater(request.body.price)
             return await new ProductService().Edit(request.body).then((data) => {
                 return response.status(200).send(data)
             })

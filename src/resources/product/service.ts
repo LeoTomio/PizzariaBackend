@@ -3,6 +3,7 @@ import moment from 'moment';
 import path from 'path';
 import { MulterFunction } from "../../config/multer";
 import prismaClient from "../../prisma";
+import { moneyFormater } from '../../utils/moneyFormat';
 
 export class ProductService {
 
@@ -20,12 +21,8 @@ export class ProductService {
                 id: true,
                 name: true,
                 price: true,
+                promotional_price: true,
                 unity: true,
-                category: {
-                    select: {
-                        name: true
-                    }
-                },
                 category_id: true,
                 description: true,
                 banner: true
@@ -49,7 +46,8 @@ export class ProductService {
             data: {
                 name: product.name,
                 description: product.description,
-                price: product.price,
+                price: moneyFormater(product.price),
+                promotional_price: product.promotional_price ? moneyFormater(product.promotional_price) : null,
                 banner: product.banner,
                 unity: Number(product.unity),
                 updated_at: moment().toDate()
