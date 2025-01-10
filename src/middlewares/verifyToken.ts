@@ -1,16 +1,14 @@
-import { Router, Request, Response, NextFunction } from 'express';
-import { loginJwt } from './loginJwt';
+import { Request, Response, Router } from 'express';
 import prismaClient from '../prisma';
-import { PayLoad } from '../resources/user/interface';
-import { verify } from 'jsonwebtoken';
+import { decode, loginJwt } from './loginJwt';
 let verifyLogin;
 
-export const verifyTokenLogin = (router: Router) => {
+export function verifyTokenLogin(router: Router) {
     router.use((request: Request, response: Response, next) => {
         const token = request.headers.authorization?.split(' ')[1];
         try {
-            const { sub } = verify(token, process.env.JWT_SECRET) as PayLoad;
-            request.user_id = sub
+            loginJwt(token)
+            request.token = decode(token);
 
             return next();
         } catch {
@@ -21,7 +19,7 @@ export const verifyTokenLogin = (router: Router) => {
 
 
 
-export const tokenValidator = async (request: Request) => {
+export async function tokenValidator(request: Request) {
     const token = request.headers.authorization?.split(' ')[1];
     verifyLogin = await loginJwt(token);
 

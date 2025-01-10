@@ -22,6 +22,7 @@ interface Token {
     email: string,
     type: string,
     company_id: string
+    sub:string //userId
 }
 
 export { PayLoad, UserRequest, AuthRequest, Token }

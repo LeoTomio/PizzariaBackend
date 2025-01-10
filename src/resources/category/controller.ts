@@ -15,10 +15,9 @@ export class CategoryController {
         }
     }
     async List(request: Request, response: Response, next: NextFunction) {
-        try {
-            const token = tokenDecodifier(request.headers.authorization) as Token
+        try { 
 
-            return await new CategoryService().List(token).then((data) => {
+            return await new CategoryService().List(request.body.token).then((data) => {
                 return response.status(200).send(data)
             })
         } catch (error) {
@@ -27,8 +26,7 @@ export class CategoryController {
     }
     async Create(request: Request, response: Response, next: NextFunction) {
         try {
-            const token = tokenDecodifier(request.headers.authorization) as Token
-            return await new CategoryService().Create(request.body, token).then((data) => {
+            return await new CategoryService().Create(request.body, request.token as Token).then((data) => {
                 return response.status(201).send(data)
             })
         } catch (error) {
@@ -37,7 +35,8 @@ export class CategoryController {
     }
     async Edit(request: Request, response: Response, next: NextFunction) {
         try {
-            return await new CategoryService().Edit(request.body).then((data) => {
+
+            return await new CategoryService().Edit(request.body,request.token as Token).then((data) => {
                 return response.status(200).send(data);
             })
         } catch (error) {
