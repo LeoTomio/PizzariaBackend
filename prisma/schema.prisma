@@ -19,7 +19,7 @@ enum Type {
 model User {
   id         String    @id @default(uuid())
   name       String    @unique
-  email      String
+  email      String    @unique
   password   String
   type       Type
   company    Company?  @relation(fields: [company_id], references: [id])
@@ -52,27 +52,16 @@ model Company {
   @@map("company")
 }
 
-model WeekDays {
-  id         Int              @id @default(autoincrement())
-  name       String
-  companies  CompanyWeekDay[]
-  created_at DateTime?        @default(now())
-  updated_at DateTime?        @default(now())
-
-  @@map("weekdays")
-}
-
 model CompanyWeekDay {
   id         Int       @id @default(autoincrement())
   workHours  String
   company_id String
-  weekday_id Int
+  weekday    String
   company    Company   @relation(fields: [company_id], references: [id])
-  weekday    WeekDays  @relation(fields: [weekday_id], references: [id])
   created_at DateTime? @default(now())
   updated_at DateTime? @default(now())
 
-  @@unique([company_id, weekday_id]) // Evita duplicidade na relação
+  @@unique([company_id, weekday]) // Evita duplicidade na relação
   @@map("company_weekdays")
 }
 

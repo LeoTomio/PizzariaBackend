@@ -50,6 +50,7 @@ export class CompanyService {
                 name: true
             }
         })
+        //Já criar um usuario pra essa empresa também
 
     }
     async Edit(response: Company) {

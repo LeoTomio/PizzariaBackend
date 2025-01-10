@@ -1,12 +1,10 @@
 import prismaClient from '../../src/prisma';
 import createAdm from './createAdm';
 import createCompany from './createCompany';
-import createWeekDays from './createWeekDays';
 
 
 async function main() {
   await createAdm()
-  await createWeekDays()
   await createCompany()
   console.log('Seeds criadas com sucesso!');
 }

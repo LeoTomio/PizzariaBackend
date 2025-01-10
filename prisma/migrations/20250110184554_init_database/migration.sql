@@ -25,6 +25,9 @@ CREATE TABLE "company" (
     "deliveryTimeFrom" TEXT NOT NULL,
     "deliveryTimeTo" TEXT NOT NULL,
     "banner" TEXT NOT NULL,
+    "instagram" TEXT,
+    "facebook" TEXT,
+    "isActive" BOOLEAN NOT NULL DEFAULT true,
     "created_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
 
@@ -32,21 +35,11 @@ CREATE TABLE "company" (
 );
 
 -- CreateTable
-CREATE TABLE "weekdays" (
-    "id" SERIAL NOT NULL,
-    "name" TEXT NOT NULL,
-    "created_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT "weekdays_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
 CREATE TABLE "company_weekdays" (
     "id" SERIAL NOT NULL,
     "workHours" TEXT NOT NULL,
     "company_id" TEXT NOT NULL,
-    "weekday_id" INTEGER NOT NULL,
+    "weekday" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
 
@@ -69,8 +62,10 @@ CREATE TABLE "products" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "price" TEXT NOT NULL,
+    "promotional_price" TEXT,
     "description" TEXT NOT NULL,
     "banner" TEXT NOT NULL,
+    "unity" INTEGER NOT NULL DEFAULT 1,
     "created_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
     "category_id" TEXT NOT NULL,
@@ -108,10 +103,13 @@ CREATE TABLE "items" (
 CREATE UNIQUE INDEX "users_name_key" ON "users"("name");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "company_name_key" ON "company"("name");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "company_weekdays_company_id_weekday_id_key" ON "company_weekdays"("company_id", "weekday_id");
+CREATE UNIQUE INDEX "company_weekdays_company_id_weekday_key" ON "company_weekdays"("company_id", "weekday");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "categories_name_key" ON "categories"("name");
@@ -121,9 +119,6 @@ ALTER TABLE "users" ADD CONSTRAINT "users_company_id_fkey" FOREIGN KEY ("company
 
 -- AddForeignKey
 ALTER TABLE "company_weekdays" ADD CONSTRAINT "company_weekdays_company_id_fkey" FOREIGN KEY ("company_id") REFERENCES "company"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "company_weekdays" ADD CONSTRAINT "company_weekdays_weekday_id_fkey" FOREIGN KEY ("weekday_id") REFERENCES "weekdays"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "categories" ADD CONSTRAINT "categories_company_id_fkey" FOREIGN KEY ("company_id") REFERENCES "company"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

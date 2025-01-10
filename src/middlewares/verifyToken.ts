@@ -9,15 +9,12 @@ export function verifyTokenLogin(router: Router) {
         try {
             loginJwt(token)
             request.token = decode(token);
-
             return next();
         } catch {
             return response.status(401).end();
         }
     });
 };
-
-
 
 export async function tokenValidator(request: Request) {
     const token = request.headers.authorization?.split(' ')[1];

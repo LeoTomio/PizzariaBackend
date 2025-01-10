@@ -33,10 +33,13 @@ export class ProductService {
         })
     }
 
-    async Create(response: Product) {
+    async Create(product: Product) {
         return await prismaClient.product.create({
             data: {
-                ...response
+                ...product,
+                price: moneyFormater(product.price),
+                promotional_price: product.promotional_price ? moneyFormater(product.promotional_price) : null,
+                unity:Number(product.unity)
             }
         })
     }
