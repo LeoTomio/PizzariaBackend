@@ -80,8 +80,6 @@ export class CategoryService {
         const existingCategory = await this.GetOne(id)
 
         if (!existingCategory) throw { message: "Categoria não encontrada", status: 404 };
-        const updatedCompanyId = isAdm(token) ? company_id : existingCategory.company_id;
-        console.log(updatedCompanyId)
 
         return await prismaClient.category.update({
             data: {

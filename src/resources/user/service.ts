@@ -3,6 +3,7 @@ import { hash } from 'bcryptjs'
 import { compare } from "bcryptjs";
 import { sign } from 'jsonwebtoken'
 import { AuthRequest, UserRequest } from "./interface";
+import { User } from "@prisma/client";
 
 export class UserService {
 
@@ -20,8 +21,9 @@ export class UserService {
         })
     }
 
-    async CreateUser(response: UserRequest) {
-        const { email } = response
+    async CreateUser(user: UserRequest) {
+
+        const { email } = user
         if (!email) {
             throw { message: "Email incorreto", status: 400 };
         }
@@ -31,10 +33,10 @@ export class UserService {
                 throw { message: "Usuário já existe", status: 409 };
             }
         })
-        response.password = await hash(response.password, 8)
+        user.password = await hash(user.password, 8)
         return await prismaClient.user.create({
             data: {
-                ...response
+                ...user
             },
             select: {
                 id: true,
@@ -52,7 +54,7 @@ export class UserService {
             }
         })
         if (!user || !await compare(password, user.password)) {
-            throw { message: "Usuário ou senha errado", status: 400 };
+            throw { message: "Usuário ou senha incorretos", status: 400 };
         }
         const token = sign({
             name: user.name,
@@ -62,7 +64,7 @@ export class UserService {
         },
             process.env.JWT_SECRET,
             {
-                
+
                 subject: user.id,
                 expiresIn: '30d'
             }
@@ -78,5 +80,34 @@ export class UserService {
 
     async FindFirst(email: string) {
         return await prismaClient.user.findFirst({ where: { email: email } })
+    }
+
+    async Edit(userData: Partial<User>) {
+        const { id, name, email, password } = userData;
+        if (!id) {
+            throw {
+                message: "O ID do usuário é obrigatório.",
+                status: 400
+            };
+        }
+        const existingUser = await prismaClient.user.findUnique({ where: { id } });
+        if (!existingUser) {
+            throw {
+                message: "Usuário não encontrado",
+                status: 404
+            };
+        }
+        if (password) {
+            userData.password = await hash(userData.password, 8)
+        }
+        return await prismaClient.user.update({
+            data: {
+                name: name || undefined,
+                email: email || undefined,
+                password: userData.password || undefined,
+                updated_at: new Date(),
+            },
+            where: { id }
+        });
     }
 }

@@ -37,7 +37,6 @@ async function createCompany() {
 
     //Já criar um usuario pra essa empresa também
 
-    console.log('Empresa e associações criadas!');
 }
 
 export default createCompany;

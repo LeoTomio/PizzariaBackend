@@ -9,6 +9,7 @@ interface UserRequest {
     name: string;
     email: string;
     password: string;
+    company_id: string;
     type: Type
 }
 
@@ -22,7 +23,7 @@ interface Token {
     email: string,
     type: string,
     company_id: string
-    sub:string //userId
+    sub: string //userId
 }
 
 export { PayLoad, UserRequest, AuthRequest, Token }

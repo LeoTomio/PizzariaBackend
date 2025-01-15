@@ -23,7 +23,7 @@ model User {
   password   String
   type       Type
   company    Company?  @relation(fields: [company_id], references: [id])
-  company_id String?
+  company_id String?   @unique
   created_at DateTime? @default(now())
   updated_at DateTime? @default(now())
 
@@ -47,7 +47,7 @@ model Company {
   updated_at       DateTime?        @default(now())
   Category         Category[]
   Order            Order[]
-  User             User[]
+  User             User?
 
   @@map("company")
 }

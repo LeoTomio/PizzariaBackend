@@ -6,7 +6,9 @@ const router = express.Router();
 
 verifyTokenLogin(router)
 
-router.route('/:id').get(new CompanyController().GetOne)
+router.route('/info').get(new CompanyController().GetOne)
+
+router.route('/info/socialMedia').get(new CompanyController().getSocialMedia)
 
 router.route('/').get(new CompanyController().List)
 

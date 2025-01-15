@@ -36,3 +36,6 @@ Depois do commit dar o comando: vercel --prod
 
 
 # ajustar os produtos/orders pra receberem o id da company
+
+
+### Criar log para o sistema

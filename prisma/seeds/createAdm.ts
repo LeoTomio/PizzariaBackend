@@ -32,7 +32,6 @@ async function createAdm() {
         },
     });
 
-    console.log("Usuário administrador criado com sucesso!");
 }
 
 export default createAdm;
