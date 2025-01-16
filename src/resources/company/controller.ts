@@ -26,12 +26,13 @@ export class CompanyController {
     }
     async Create(request: Request, response: Response, next: NextFunction) {
         try {
-            if (!request.files || Object.keys(request.files).length === 0) {
-                throw new Error("Erro ao enviar imagem");
-            }
-            const file = request.files['file'] as UploadedFile;
-            const resultFile = await uploadImage(file);
-            request.body.banner = resultFile.url;
+            // if (!request.files || Object.keys(request.files).length === 0) {
+            //     throw new Error("Erro ao enviar imagem");
+            // }
+            // const file = request.files['file'] as UploadedFile;
+            // const resultFile = await uploadImage(file);
+            // request.body.banner = resultFile.url;
+            request.body.banner = "https://res.cloudinary.com/dbycct9ij/image/upload/v1736904605/rc60l7jqqqsktqiaflcr"
             return await new CompanyService().Create(request.body).then((data) => {
                 return response.status(201).send(data)
             })

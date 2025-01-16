@@ -22,7 +22,7 @@ model User {
   email      String    @unique
   password   String
   type       Type
-  company    Company?  @relation(fields: [company_id], references: [id])
+  company    Company?  @relation(fields: [company_id], references: [id], onDelete: Cascade)
   company_id String?   @unique
   created_at DateTime? @default(now())
   updated_at DateTime? @default(now())
@@ -33,11 +33,11 @@ model User {
 model Company {
   id               String           @id @default(uuid())
   name             String           @unique
-  phone            String
-  address          String
-  withdrawalTime   String
-  deliveryTimeFrom String
-  deliveryTimeTo   String
+  phone            String?
+  address          String?
+  withdrawalTime   String?
+  deliveryTimeFrom String?
+  deliveryTimeTo   String?
   banner           String
   instagram        String?
   facebook         String?
@@ -57,7 +57,7 @@ model CompanyWeekDay {
   workHours  String
   company_id String
   weekday    String
-  company    Company   @relation(fields: [company_id], references: [id])
+  company    Company   @relation(fields: [company_id], references: [id], onDelete: Cascade)
   created_at DateTime? @default(now())
   updated_at DateTime? @default(now())
 

@@ -46,6 +46,7 @@ export class CompanyService {
             select: {
                 id: true,
                 name: true,
+                isActive: true
             },
             orderBy: {
                 name: 'asc',
@@ -53,9 +54,9 @@ export class CompanyService {
         });
     }
 
-    async Create(data: Company & Pick<User, 'email' | 'password'>) {
+    async Create(data: Company & Pick<User, 'email'>) {
 
-        const { email, password, ...companyData } = data
+        const { email, ...companyData } = data
         if (!companyData.name || companyData.name.trim() === '') {
             throw { message: "Nome inválido", status: 400 };
         }
@@ -71,17 +72,18 @@ export class CompanyService {
                 },
                 select: {
                     id: true,
-                    name: true
+                    name: true,
+                    isActive:true
                 }
             }).then(async (company) => {
-                const userService = new UserService()
-                await userService.CreateUser({
-                    email,
-                    password,
-                    name: companyData.name,
-                    type: Type.RESTAURANT,
-                    company_id: company.id
-
+                await prisma.user.create({
+                    data: {
+                        email,
+                        password: await hash('54321', 8),
+                        name: companyData.name,
+                        type: Type.RESTAURANT,
+                        company_id: company.id
+                    }
                 })
                 return company
             });
@@ -98,7 +100,6 @@ export class CompanyService {
             return company;
         })
     }
-
 
     async Edit(company: CompanyEdit) {
         const { id, User, weekDays, ...companyData } = company;
@@ -201,8 +202,6 @@ export class CompanyService {
 
         return result;
     }
-
-
 
     async Delete(id: Company['id']) {
         await prismaClient.company.delete({
