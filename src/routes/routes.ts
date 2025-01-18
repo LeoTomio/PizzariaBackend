@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { tokenValidator } from '../middlewares/verifyToken';
 import CategoryRoutes from './category/index';
+import ManagementRoutes from './management/index';
 import OrderRoutes from './order/index';
 import ProductRoutes from './product/index';
 import UserRoutes from './users/index';
@@ -16,6 +17,8 @@ router.get('/status', (req, res) => {
 
 // Rotas públicas
 router.use('/user', UserRoutes);
+router.use('/category', CategoryRoutes);
+router.use('/company', CompanyRoutes);
 
 // Middleware de autenticação
 router.use(async (req, res, next) => {
@@ -31,10 +34,9 @@ router.use(async (req, res, next) => {
 });
 
 // Rotas protegidas
-router.use('/category', CategoryRoutes);
+router.use('/management', ManagementRoutes);
 router.use('/product', ProductRoutes);
 router.use('/order', OrderRoutes);
-router.use('/company', CompanyRoutes);
 
 
 router.use(errorHandler);

@@ -3,7 +3,7 @@ import { hash } from "bcryptjs";
 import prismaClient from "../../src/prisma";
 
 async function createAdm() {
-    const email = 'a@a.com';
+    const email = 'a@a';
     const name = 'Administrador'
 
     // Verifica se o usuário já existe

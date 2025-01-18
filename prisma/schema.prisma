@@ -42,6 +42,7 @@ model Company {
   instagram        String?
   facebook         String?
   isActive         Boolean          @default(true)
+  url              String           @unique
   weekDays         CompanyWeekDay[]
   created_at       DateTime?        @default(now())
   updated_at       DateTime?        @default(now())
@@ -61,19 +62,20 @@ model CompanyWeekDay {
   created_at DateTime? @default(now())
   updated_at DateTime? @default(now())
 
-  @@unique([company_id, weekday]) // Evita duplicidade na relação
+  @@unique([company_id, weekday])
   @@map("company_weekdays")
 }
 
 model Category {
   id         String    @id @default(uuid())
-  name       String    @unique()
+  name       String
   created_at DateTime? @default(now())
   updated_at DateTime? @default(now())
   company    Company   @relation(fields: [company_id], references: [id])
   company_id String
   products   Product[]
 
+  @@unique([name, company_id])
   @@map("categories")
 }
 
@@ -84,13 +86,15 @@ model Product {
   promotional_price String?
   description       String
   banner            String
-  unity             Int       @default(1)
+  unity             String    @default("1 unidade")
   created_at        DateTime? @default(now())
   updated_at        DateTime? @default(now())
 
-  category    Category @relation(fields: [category_id], references: [id])
-  category_id String
-  Items       Item[]
+  category                 Category                   @relation(fields: [category_id], references: [id])
+  category_id              String
+  Items                    Item[]
+  productAdditionalId      String?
+  ProductAdditionalProduct ProductAdditionalProduct[]
 
   @@map("products")
 }
@@ -117,10 +121,46 @@ model Item {
   created_at DateTime? @default(now())
   updated_at DateTime? @default(now())
 
-  order      Order   @relation(fields: [order_id], references: [id])
-  product    Product @relation(fields: [product_id], references: [id])
-  order_id   String
-  product_id String
+  order                 Order                   @relation(fields: [order_id], references: [id])
+  product               Product                 @relation(fields: [product_id], references: [id])
+  order_id              String
+  product_id            String
+  ItemProductAdditional ItemProductAdditional[]
 
   @@map("items")
+}
+
+model ProductAdditional {
+  id                       String                     @id @default(uuid())
+  name                     String
+  description              String
+  price                    String
+  created_at               DateTime?                  @default(now())
+  updated_at               DateTime?                  @default(now())
+  ProductAdditionalProduct ProductAdditionalProduct[]
+  ItemProductAdditional    ItemProductAdditional[]
+
+  @@map("product_additionals")
+}
+
+model ProductAdditionalProduct {
+  id String @id @default(uuid())
+
+  productAdditional     ProductAdditional @relation(fields: [product_additional_id], references: [id])
+  product_additional_id String
+  product               Product           @relation(fields: [product_id], references: [id])
+  product_id            String
+
+  @@map("product_additional_product")
+}
+
+model ItemProductAdditional {
+  id                    String            @id @default(uuid())
+  quantity              Int
+  productAdditional     ProductAdditional @relation(fields: [product_additional_id], references: [id])
+  product_additional_id String
+  itemAdditional        Item              @relation(fields: [item_id], references: [id])
+  item_id               String
+
+  @@map("item_additional_product")
 }

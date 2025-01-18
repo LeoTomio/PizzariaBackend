@@ -19,9 +19,10 @@ async function createCompany() {
             phone: '123456789',
             address: 'Rua Padrão, 123',
             withdrawalTime: '30',
-            deliveryTimeFrom: '18:30',
-            deliveryTimeTo: '22:00',
-            banner: 'https://example.com/banner.jpg',
+            deliveryTimeFrom: '30',
+            deliveryTimeTo: '70',
+            url:"hasakisushidelivery",
+            banner: 'https://res.cloudinary.com/dbycct9ij/image/upload/v1736904605/sem-foto_tzomjx',
         },
     });
 

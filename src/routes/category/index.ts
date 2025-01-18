@@ -1,21 +1,14 @@
 import express from 'express';
 import { verifyTokenLogin } from '../../middlewares/verifyToken';
 import { CategoryController } from '../../resources/category/controller';
+import managemantRoutes from '../management/index';
 
 const router = express.Router();
 
-verifyTokenLogin(router)
+router.route('/:url').get(new CategoryController().GetOne)
 
-router.route('/:id').get(new CategoryController().GetOne)
-
-router.route('/').get(new CategoryController().List)
-
-router.route('/').post(new CategoryController().Create)
-
-router.route('/').put(new CategoryController().Edit)
-
-router.route('/:id').delete(new CategoryController().Delete)
-
+router.route('/list/:url').get(new CategoryController().List)
+ 
 export default router;
 
 

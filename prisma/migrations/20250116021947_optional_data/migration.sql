@@ -1,6 +1,0 @@
--- AlterTable
-ALTER TABLE "company" ALTER COLUMN "phone" DROP NOT NULL,
-ALTER COLUMN "address" DROP NOT NULL,
-ALTER COLUMN "withdrawalTime" DROP NOT NULL,
-ALTER COLUMN "deliveryTimeFrom" DROP NOT NULL,
-ALTER COLUMN "deliveryTimeTo" DROP NOT NULL;
