@@ -66,11 +66,10 @@ CREATE TABLE "products" (
     "promotional_price" TEXT,
     "description" TEXT NOT NULL,
     "banner" TEXT NOT NULL,
-    "unity" INTEGER NOT NULL DEFAULT 1,
+    "unity" TEXT NOT NULL DEFAULT '1 unidade',
     "created_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
     "category_id" TEXT NOT NULL,
-    "productAdditionalId" TEXT,
 
     CONSTRAINT "products_pkey" PRIMARY KEY ("id")
 );
@@ -151,7 +150,10 @@ CREATE UNIQUE INDEX "company_url_key" ON "company"("url");
 CREATE UNIQUE INDEX "company_weekdays_company_id_weekday_key" ON "company_weekdays"("company_id", "weekday");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "categories_name_key" ON "categories"("name");
+CREATE UNIQUE INDEX "categories_name_company_id_key" ON "categories"("name", "company_id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "products_name_category_id_key" ON "products"("name", "category_id");
 
 -- AddForeignKey
 ALTER TABLE "users" ADD CONSTRAINT "users_company_id_fkey" FOREIGN KEY ("company_id") REFERENCES "company"("id") ON DELETE CASCADE ON UPDATE CASCADE;

@@ -93,9 +93,9 @@ model Product {
   category                 Category                   @relation(fields: [category_id], references: [id])
   category_id              String
   Items                    Item[]
-  productAdditionalId      String?
   ProductAdditionalProduct ProductAdditionalProduct[]
 
+  @@unique([name, category_id])
   @@map("products")
 }
 

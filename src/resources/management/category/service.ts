@@ -6,7 +6,7 @@ import { Token } from '../../user/interface';
 export class CategoryService {
 
     async GetOne(id: string, token: Token) {
-        return await prismaClient.category.findFirst({
+        const category = await prismaClient.category.findFirst({
             select: {
                 id: true,
                 name: true,
@@ -17,6 +17,8 @@ export class CategoryService {
                 ...(token.type != "ADMIN" && { company_id: token.company_id })
             }
         })
+        if (!category) throw { message: "Categoria não encontrada", status: 404 };
+        return category
     }
 
     async List(company_id: string, token: Token) {
@@ -46,14 +48,16 @@ export class CategoryService {
         });
     }
 
-    async Create(response: Category, token: Token) {
-        const { name } = response
-        if (!name || name.trim() === '') throw { message: "Nome inválido", status: 400 };
+    async Create(category: Category, token: Token) {
+        const { name } = category
+        if (!name || name.trim() === '') {
+            throw { message: "Nome inválido", status: 400 }
+        }
 
         return await prismaClient.category.create({
             data: {
-                ...response,
-                company_id: response.company_id || token.company_id
+                ...category,
+                company_id: category.company_id || token.company_id
             },
             select: {
                 id: true,
@@ -71,16 +75,16 @@ export class CategoryService {
         })
     }
 
-    async Edit(response: Category, token: Token) {
-        const { id, name } = response;
-        if (!name || name.trim() === '') throw { message: "Nome inválido", status: 400 };
+    async Edit(category: Category, token: Token) {
+        const { id, name } = category;
+        if (!name || name.trim() === '') {
+            throw { message: "Nome inválido", status: 400 }
+        }
 
         const existingCategory = await this.GetOne(id, token);
-        console.log(existingCategory)
-        if (!existingCategory) throw { message: "Categoria não encontrada", status: 404 };
 
         if (token.type !== "ADMIN" && existingCategory.company_id !== token.company_id) {
-            throw { message: "Não autorizado a editar esta categoria", status: 403 };
+            throw { message: "Sem autorização para editar esta categoria", status: 403 };
         }
 
         return await prismaClient.category.update({
@@ -111,7 +115,6 @@ export class CategoryService {
     async Delete(id: Category['id'], token: Token) {
 
         const existingCategory = await this.GetOne(id, token);
-        if (!existingCategory) throw { message: "Categoria não encontrada", status: 404 };
 
         let haveProduct = !!await prismaClient.product.findFirst({
             where: {
@@ -120,15 +123,8 @@ export class CategoryService {
         });
         if (haveProduct) throw { message: "Não é possível deletar, pois existem produtos cadastrados nesta categoria", status: 409 };
 
-        if (token.type !== "ADMIN") {
-            const category = await prismaClient.category.findUnique({
-                where: { id: id },
-                select: { company_id: true }
-            });
-
-            if (category?.company_id !== token.company_id) {
-                throw { message: "Não autorizado a excluir esta categoria", status: 403 };
-            }
+        if (token.type !== "ADMIN" && existingCategory?.company_id !== token.company_id) {
+            throw { message: "Sem autorização para excluir esta categoria", status: 403 };
         }
 
         await prismaClient.category.delete({

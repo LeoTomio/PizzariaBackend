@@ -3,9 +3,9 @@ import { tokenValidator } from '../middlewares/verifyToken';
 import CategoryRoutes from './category/index';
 import ManagementRoutes from './management/index';
 import OrderRoutes from './order/index';
-import ProductRoutes from './product/index';
 import UserRoutes from './users/index';
 import CompanyRoutes from './company/index';
+// import ProductRoutes from './product/index';
 import errorHandler from '../middlewares/customError';
 
 const router = Router();
@@ -19,6 +19,7 @@ router.get('/status', (req, res) => {
 router.use('/user', UserRoutes);
 router.use('/category', CategoryRoutes);
 router.use('/company', CompanyRoutes);
+// router.use('/product', ProductRoutes);
 
 // Middleware de autenticação
 router.use(async (req, res, next) => {
@@ -35,7 +36,6 @@ router.use(async (req, res, next) => {
 
 // Rotas protegidas
 router.use('/management', ManagementRoutes);
-router.use('/product', ProductRoutes);
 router.use('/order', OrderRoutes);
 
 
