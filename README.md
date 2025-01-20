@@ -39,8 +39,3 @@ Depois do commit dar o comando: vercel --prod
 
 
 ### Criar log para o sistema
-
-
-
-# Ajustes 
-* No produto quando for cadastrar um novo fazr uma validação, verificando primeiro se existe a categoria

@@ -75,9 +75,11 @@ export class ProductService {
         if (!name || name.trim() === '') {
             throw { message: "Nome inválido", status: 400 }
         }
+        const categoryService = new CategoryService()
+
+        await categoryService.GetOne(product.category_id, token)
 
         if (token.type !== "ADMIN") {
-            const categoryService = new CategoryService()
             let category = await categoryService.GetOne(product.category_id, token)
             if (category.company_id != company_id) {
                 throw { message: "Sem autorização para criar um produto para esta empresa", status: 403 };
@@ -121,10 +123,10 @@ export class ProductService {
         if (!product.name || product.name.trim() === '') {
             throw { message: "Nome inválido", status: 400 }
         }
-
+        const categoryService = new CategoryService()
+        await categoryService.GetOne(product.category_id, token)
 
         if (token.type !== "ADMIN") {
-            const categoryService = new CategoryService()
             let category = await categoryService.GetOne(product.category_id, token)
             if (category.company_id !== company_id) {
                 throw { message: "Sem autorização para editar este produto", status: 403 };
