@@ -7,10 +7,8 @@ const router = express.Router();
 verifyTokenLogin(router)
 
 router.route('/:id').get(new CategoryController().GetOne)
-//restaurante
-router.route('/').get(new CategoryController().List)
-//adm
-router.route('/list/:id').get(new CategoryController().List)
+
+router.route('/list/:url').get(new CategoryController().List)
 
 router.route('/').post(new CategoryController().Create)
 

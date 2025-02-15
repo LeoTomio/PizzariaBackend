@@ -86,7 +86,7 @@ model Product {
   promotional_price String?
   description       String
   banner            String
-  unity             String    @default("1 unidade")
+  unity             String?   
   created_at        DateTime? @default(now())
   updated_at        DateTime? @default(now())
 

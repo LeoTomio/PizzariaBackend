@@ -19,9 +19,8 @@ export class ProductController {
 
     async List(request: Request, response: Response, next: NextFunction) {
         try {
-            console.log('list')
-            const company_id = request.params.id || request.token.company_id
-            return await new ProductService().List(company_id).then((data) => {
+            const url = request.params.url || request.token.url
+            return await new ProductService().List(url).then((data) => {
                 return response.status(200).send(data)
             })
         } catch (error) {

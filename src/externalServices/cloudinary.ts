@@ -10,7 +10,9 @@ cloudinary.config({
 // Função para upload de imagem
 export async function uploadImage(file: UploadedFile): Promise<UploadApiResponse> {
     return new Promise<UploadApiResponse>((resolve, reject) => {
-        cloudinary.uploader.upload_stream({}, (error, result) => {
+        cloudinary.uploader.upload_stream({
+            folder:process.env.CLOUDINARY_FOLDER
+        }, (error, result) => {
             if (error) {
                 return reject(error as UploadApiErrorResponse);
             }

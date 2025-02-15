@@ -24,11 +24,11 @@ export class CategoryService {
                     select: {
                         id: true,
                         name: true,
-                        price:true,
-                        banner:true,
-                        description:true,
-                        promotional_price:true,
-                        unity:true
+                        price: true,
+                        banner: true,
+                        description: true,
+                        promotional_price: true,
+                        unity: true
 
                     },
                 },

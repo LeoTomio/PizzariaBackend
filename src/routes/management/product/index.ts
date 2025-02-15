@@ -10,7 +10,7 @@ router.route('/:id').get(new ProductController().GetOne)
 //restaurante
 router.route('/').get(new ProductController().List)
 //adm
-router.route('/list/:id').get(new ProductController().List)
+router.route('/list/:url').get(new ProductController().List)
 
 router.route('/').post(new ProductController().Create)
 

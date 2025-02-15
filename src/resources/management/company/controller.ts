@@ -1,14 +1,12 @@
 import { NextFunction, Request, Response } from "express";
 import { CompanyService } from "./service";
-import { UploadedFile } from "express-fileupload";
-import { uploadImage } from "../../../externalServices/cloudinary";
 import { Token } from "../../user/interface";
 
 export class CompanyController {
 
     async GetOne(request: Request, response: Response, next: NextFunction) {
         try {
-            const company_id = request.params.id || request.token.company_id
+            const company_id = request.params.url || request.token.url
             return await new CompanyService().GetOne(company_id, request.token as Token).then((data) => {
                 return response.status(200).send(data)
             })

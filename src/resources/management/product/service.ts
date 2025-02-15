@@ -35,30 +35,34 @@ export class ProductService {
         return product
     }
 
-    async List(company_id: string) {
-        return await prismaClient.product.findMany({
-            select: {
-                id: true,
-                name: true,
-                price: true,
-                promotional_price: true,
-                unity: true,
-                category_id: true,
-                description: true,
-                banner: true
-            },
-            orderBy: {
-                name: 'asc'
+    async List(url: string) {
+        return await prismaClient.category.findMany({
+            include: {
+                products: {
+                    select: {
+                        id: true,
+                        name: true,
+                        price: true,
+                        banner: true,
+                        description: true,
+                        promotional_price: true,
+                        unity: true,
+                        category_id: true
+
+                    },
+                },
             },
             where: {
-                category: {
-                    company: {
-                        id: company_id
-                    }
+                company: {
+                    url
                 }
-            }
-        })
+            },
+        }).then((response) => {
+            return response.map(({ created_at, updated_at, company_id, ...rest }) => rest);
+        });
     }
+
+
 
     async Create(product: Product & Pick<Category, 'company_id'>, files: any, token: Token) {
 
@@ -90,7 +94,7 @@ export class ProductService {
         const resultFile = await uploadImage(file);
         product.banner = resultFile.url;
 
-        return await prismaClient.product.create({
+        const prod = await prismaClient.product.create({
             data: {
                 name: name,
                 banner: product.banner,
@@ -99,15 +103,17 @@ export class ProductService {
                 price: moneyFormater(product.price),
                 promotional_price: product.promotional_price ? moneyFormater(product.promotional_price) : null,
                 unity: product.unity
-            }
+            },
         })
+        const { updated_at, created_at, ...rest } = prod
+
+        return prod
+
     }
 
     async Edit(product: Product & Pick<Category, 'company_id'>, files: any, token: Token) {
-
         const company_id = product.company_id || token.company_id
-        const isEdit = !files && !product.banner;
-        if (isEdit) {
+        if (!files && !product.banner) {
             throw {
                 message: "Imagem é obrigatória",
                 status: 400

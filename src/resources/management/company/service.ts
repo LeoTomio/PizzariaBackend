@@ -9,8 +9,8 @@ import { uploadImage } from '../../../externalServices/cloudinary';
 
 export class CompanyService {
 
-    async GetOne(id: string, token: Token) {
-        if (token.company_id && token.company_id != id) {
+    async GetOne(url: string, token: Token) {
+        if (token.url && token.url != url) {
             throw { message: "Sem autorização para selecionar dados desta empresa", status: 403 };
         }
         const company = await prismaClient.company.findFirst({
@@ -41,7 +41,7 @@ export class CompanyService {
                 }
             },
             where: {
-                id: id,
+                url: url,
             },
         });
         if (!company) throw { message: "Empresa não encontrada", status: 404 };
@@ -58,7 +58,12 @@ export class CompanyService {
                 id: true,
                 name: true,
                 isActive: true,
-                url: true
+                url: true,
+                User: {
+                    select: {
+                        email: true
+                    }
+                }
             },
             orderBy: {
                 name: 'asc',
@@ -91,6 +96,7 @@ export class CompanyService {
                 select: {
                     id: true,
                     name: true,
+                    url: true,
                     isActive: true
                 }
             }).then(async (company) => {
@@ -129,7 +135,10 @@ export class CompanyService {
 
         const { email, password } = parsedUser
         if (!files && !companyData.banner) {
-            throw new Error("Imagem é obrigatória")
+            throw {
+                message: "Imagem é obrigatória",
+                status: 400
+            };
         }
         if (files && Object.keys(files).length > 0) {
             const file = files['file'] as UploadedFile;
@@ -151,9 +160,9 @@ export class CompanyService {
         var weekdays
         var updatedCompany
         // Iniciar a transação
-        await prismaClient.$transaction(async (prisma) => {
 
-            // Atualizar a empresa
+        delete (companyData as any).file
+        await prismaClient.$transaction(async (prisma) => {
             updatedCompany = await prisma.company.update({
                 data: {
                     ...companyData,

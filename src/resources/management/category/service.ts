@@ -1,4 +1,4 @@
-import { Category } from '@prisma/client';
+import { Category, Company } from '@prisma/client';
 import moment from 'moment';
 import prismaClient from "../../../prisma";
 import { Token } from '../../user/interface';
@@ -14,23 +14,33 @@ export class CategoryService {
             },
             where: {
                 id: id,
-                ...(token.type != "ADMIN" && { company_id: token.company_id })
+                ...(token.type != "ADMIN" && {
+                    company: {
+                        url: token.url
+
+                    }
+                })
             }
         })
-        if (!category) throw { message: "Categoria não encontrada", status: 404 };
+        if (!category) {
+            throw { message: "Categoria não encontrada", status: 404 };
+        }
         return category
     }
 
-    async List(company_id: string, token: Token) {
+    async List(url: string, token: Token) {
         const categories = await prismaClient.category.findMany({
             select: {
                 id: true,
                 name: true,
-                company: token.type === "ADMIN" ? { select: { name: true } } : false,
-                ...(token.type === "ADMIN" && { company_id: true })
+                company: {
+                    select: {
+                        url: true
+                    }
+                }
             },
             where: {
-                company_id: company_id
+                company: { url: url }
             },
             orderBy: {
                 name: 'asc',
@@ -41,14 +51,25 @@ export class CategoryService {
             if (category.company) {
                 return {
                     ...category,
-                    company: category.company.name,
+                    url: category.company.url,
                 };
             }
             return category;
         });
     }
 
-    async Create(category: Category, token: Token) {
+    async Create(category: Category & Pick<Company, 'url'>, token: Token) {
+        const { url, ...categoryData } = category
+        const company = await prismaClient.company.findFirst({
+            select: { id: true },
+            where: {
+                url: category.url
+            }
+        })
+
+        if (!company) {
+            throw { message: "Empresa não encontrada", status: 404 }
+        };
         const { name } = category
         if (!name || name.trim() === '') {
             throw { message: "Nome inválido", status: 400 }
@@ -56,8 +77,8 @@ export class CategoryService {
 
         return await prismaClient.category.create({
             data: {
-                ...category,
-                company_id: category.company_id || token.company_id
+                ...categoryData,
+                company_id: company.id || token.company_id
             },
             select: {
                 id: true,

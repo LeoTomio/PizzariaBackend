@@ -15,8 +15,8 @@ export class CategoryController {
     }
     async List(request: Request, response: Response, next: NextFunction) {
         try {
-            const company_id = request.params.id || request.token.company_id
-            return await new CategoryService().List(company_id, request.token as Token).then((data) => {
+            const url = request.params.url || request.token.url
+            return await new CategoryService().List(url, request.token as Token).then((data) => {
                 return response.status(200).send(data)
             })
         } catch (error) {
@@ -34,7 +34,6 @@ export class CategoryController {
     }
     async Edit(request: Request, response: Response, next: NextFunction) {
         try {
-
             return await new CategoryService().Edit(request.body, request.token as Token).then((data) => {
                 return response.status(200).send(data);
             })

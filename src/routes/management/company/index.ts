@@ -6,10 +6,7 @@ const router = express.Router();
 
 verifyTokenLogin(router)
 
-//restaurante
-router.route('/info').get(new CompanyController().GetOne)
-//adm
-router.route('/info/:id').get(new CompanyController().GetOne)
+router.route('/info/:url').get(new CompanyController().GetOne)
 
 router.route('/').get(new CompanyController().List)
 

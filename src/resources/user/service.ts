@@ -49,6 +49,13 @@ export class UserService {
     async AuthUser(response: AuthRequest) {
         const { email, password } = response
         const user = await prismaClient.user.findFirst({
+            include: {
+                company: {
+                    select: {
+                        url: true
+                    }
+                }
+            },
             where: {
                 email: email
             }
@@ -60,7 +67,8 @@ export class UserService {
             name: user.name,
             email: user.email,
             type: user.type,
-            company_id: user.company_id
+            company_id: user.company_id,
+            url: user?.company?.url
         },
             process.env.JWT_SECRET,
             {
