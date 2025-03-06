@@ -1,7 +1,7 @@
 import express from 'express';
 import { verifyTokenLogin } from '../../middlewares/verifyToken';
-import { OrderController } from '../../resources/order/controller';
-import itemRoutes from './item/index';
+import { OrderController } from './controller';
+import itemRoutes from './item/routes';
 
 const router = express.Router();
 

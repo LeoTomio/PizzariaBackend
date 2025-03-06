@@ -1,8 +1,5 @@
-
-
-
 import express from 'express';
-import { UserController } from '../../resources/user/controller';
+import { UserController } from './controller';
 import { verifyTokenLogin } from '../../middlewares/verifyToken';
 
 const router = express.Router();
@@ -16,5 +13,3 @@ verifyTokenLogin(router)
 router.get('/me', new UserController().detailUser)
 
 export default router;
-
-

@@ -1,5 +1,5 @@
 import express from 'express';
-import { CategoryController } from '../../../resources/management/category/controller';
+import { CategoryController } from './controller';
 import { verifyTokenLogin } from '../../../middlewares/verifyToken';
 
 const router = express.Router();

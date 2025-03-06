@@ -1,12 +1,12 @@
 import { Router } from 'express';
-import { tokenValidator } from '../middlewares/verifyToken';
-import CategoryRoutes from './category/index';
-import ManagementRoutes from './management/index';
-import OrderRoutes from './order/index';
-import UserRoutes from './users/index';
-import CompanyRoutes from './company/index';
+import { tokenValidator } from './middlewares/verifyToken';
+import CategoryRoutes from './resources/category/routes';
+import ManagementRoutes from './resources/management/routes';
+import OrderRoutes from './resources/order/routes';
+import UserRoutes from './resources/user/routes';
+import CompanyRoutes from './resources/company/routes';
 // import ProductRoutes from './product/index';
-import errorHandler from '../middlewares/customError';
+import errorHandler from './middlewares/customError';
 
 const router = Router();
 
