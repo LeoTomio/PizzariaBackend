@@ -14,6 +14,7 @@ export class CompanyService {
                 facebook: true,
                 instagram: true,
                 isActive: true,
+                status: true,
                 weekDays: {
                     select: {
                         weekday: true,

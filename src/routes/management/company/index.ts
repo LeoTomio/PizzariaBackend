@@ -16,7 +16,9 @@ router.route('/').put(new CompanyController().Edit)
 
 router.route('/:id').delete(new CompanyController().Delete)
 
-router.route('/changeStatus/:id').put(new CompanyController().changeStatus)
+router.route('/changeStatus/:url').put(new CompanyController().changeStatus)
+
+router.route('/changeOperational/:id').put(new CompanyController().changeOperational)
 
 
 export default router;

@@ -25,6 +25,7 @@ export class CompanyService {
                 banner: true,
                 facebook: true,
                 instagram: true,
+                status: true,
                 weekDays: {
                     select: {
                         weekday: true,
@@ -80,7 +81,7 @@ export class CompanyService {
         if (!companyData.name || companyData.name.trim() === '') {
             throw { message: "Nome inválido", status: 400 };
         }
-        await this.FindFirst(companyData.name).then((exist) => {
+        await prismaClient.company.findFirst({ where: { name: companyData.name } }).then((exist) => {
             if (exist) throw { message: "Empresa já existe", status: 409 };
         });
 
@@ -151,7 +152,7 @@ export class CompanyService {
         }
 
         // Verificar se a empresa já existe
-        await this.FindFirst(companyData.name).then((exist) => {
+        await prismaClient.company.findFirst({ where: { name: companyData.name } }).then((exist) => {
             if (exist && exist.id != id) {
                 throw { message: "Empresa já existe", status: 409 };
             }
@@ -255,20 +256,24 @@ export class CompanyService {
         })
     }
 
-    async FindFirst(name?: string, id?: string) {
-        if (name) {
-            return await prismaClient.company.findFirst({ where: { name } })
-        }
-        if (id) {
-            return await prismaClient.company.findFirst({ where: { id } })
-        }
+
+    async changeStatus(url: string, token: Token) {
+        const company = await prismaClient.company.findFirst({ where: { url } })
+        return (await prismaClient.company.update({
+            data: {
+                status: !company.status
+            },
+            where: {
+                url
+            }
+        })).status
     }
 
-    async changeStatus(id: string, token: Token) {
+    async changeOperational(id: string, token: Token) {
         if (token.type != "ADMIN") {
             throw { message: "Sem autorização para mudar o status desta empresas", status: 403 };
         }
-        const company = await this.FindFirst(undefined, id);
+        const company = await prismaClient.company.findFirst({ where: { id } })
         return await prismaClient.company.update({
             data: {
                 isActive: !company.isActive

@@ -41,6 +41,7 @@ model Company {
   banner           String
   instagram        String?
   facebook         String?
+  status           Boolean          @default(false)
   isActive         Boolean          @default(true)
   url              String           @unique
   weekDays         CompanyWeekDay[]
@@ -49,6 +50,7 @@ model Company {
   Category         Category[]
   Order            Order[]
   User             User?
+  Voucher          Voucher[]
 
   @@map("company")
 }
@@ -86,14 +88,14 @@ model Product {
   promotional_price String?
   description       String
   banner            String
-  unity             String?   
+  unity             String?
   created_at        DateTime? @default(now())
   updated_at        DateTime? @default(now())
 
-  category                 Category                   @relation(fields: [category_id], references: [id])
-  category_id              String
-  Items                    Item[]
-  ProductAdditionalProduct ProductAdditionalProduct[]
+  category          Category            @relation(fields: [category_id], references: [id])
+  category_id       String
+  Items             Item[]
+  ProductAdditional ProductAdditional[]
 
   @@unique([name, category_id])
   @@map("products")
@@ -121,46 +123,61 @@ model Item {
   created_at DateTime? @default(now())
   updated_at DateTime? @default(now())
 
-  order                 Order                   @relation(fields: [order_id], references: [id])
-  product               Product                 @relation(fields: [product_id], references: [id])
-  order_id              String
-  product_id            String
-  ItemProductAdditional ItemProductAdditional[]
+  order          Order            @relation(fields: [order_id], references: [id])
+  product        Product          @relation(fields: [product_id], references: [id])
+  order_id       String
+  product_id     String
+  ItemAdditional ItemAdditional[]
 
   @@map("items")
 }
 
+model Voucher {
+  id         String    @id @default(uuid())
+  code       String
+  discount   Decimal
+  isActive   Boolean   @default(false)
+  company_id String
+  created_at DateTime? @default(now())
+  updated_at DateTime? @default(now())
+
+  company Company @relation(fields: [company_id], references: [id], onDelete: Cascade)
+
+  @@unique([code, company_id])
+  @@map("voucher")
+}
+
+model Additional {
+  id                String              @id @default(uuid())
+  name              String
+  created_at        DateTime?           @default(now())
+  updated_at        DateTime?           @default(now())
+  ProductAdditional ProductAdditional[]
+  ItemAdditional    ItemAdditional[]
+
+  @@map("additional")
+}
+
 model ProductAdditional {
-  id                       String                     @id @default(uuid())
-  name                     String
-  description              String
-  price                    String
-  created_at               DateTime?                  @default(now())
-  updated_at               DateTime?                  @default(now())
-  ProductAdditionalProduct ProductAdditionalProduct[]
-  ItemProductAdditional    ItemProductAdditional[]
+  id            String     @id @default(uuid())
+  product_id    String
+  additional_id String
+  price         Decimal
+  product       Product    @relation(fields: [product_id], references: [id])
+  additional    Additional @relation(fields: [additional_id], references: [id])
+  created_at    DateTime?  @default(now())
+  updated_at    DateTime?  @default(now())
 
-  @@map("product_additionals")
+  @@map("product_additional")
 }
 
-model ProductAdditionalProduct {
-  id String @id @default(uuid())
+model ItemAdditional {
+  id            String     @id @default(uuid())
+  quantity      Int
+  additional    Additional @relation(fields: [additional_id], references: [id])
+  additional_id String
+  Item          Item?      @relation(fields: [item_id], references: [id])
+  item_id       String?
 
-  productAdditional     ProductAdditional @relation(fields: [product_additional_id], references: [id])
-  product_additional_id String
-  product               Product           @relation(fields: [product_id], references: [id])
-  product_id            String
-
-  @@map("product_additional_product")
-}
-
-model ItemProductAdditional {
-  id                    String            @id @default(uuid())
-  quantity              Int
-  productAdditional     ProductAdditional @relation(fields: [product_additional_id], references: [id])
-  product_additional_id String
-  itemAdditional        Item              @relation(fields: [item_id], references: [id])
-  item_id               String
-
-  @@map("item_additional_product")
+  @@map("item_additional")
 }

@@ -55,7 +55,16 @@ export class CompanyController {
 
     async changeStatus(request: Request, response: Response, next: NextFunction) {
         try {
-            return await new CompanyService().changeStatus(request.params.id, request.token as Token).then((data) => {
+            return await new CompanyService().changeStatus(request.params.url, request.token as Token).then((data) => {
+                return response.status(200).send(data);
+            })
+        } catch (error) {
+            next(error)
+        }
+    }
+    async changeOperational(request: Request, response: Response, next: NextFunction) {
+        try {
+            return await new CompanyService().changeOperational(request.params.id, request.token as Token).then((data) => {
                 return response.status(200).send(data);
             })
         } catch (error) {
