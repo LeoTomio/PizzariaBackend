@@ -1,12 +1,11 @@
 
 import { NextFunction, Request, Response } from "express";
-import { Token } from "../../user/interface";
-import { ProductService } from "./service";
-export class ProductController {
+import { AdditionalService } from "./service";
+export class AdditionalController {
 
     async GetOne(request: Request, response: Response, next: NextFunction) {
         try {
-            return await new ProductService().GetOne(request.params.id, request.token as Token).then((data) => {
+            return await new AdditionalService().GetOne(request.params.id).then((data) => {
                 return response.status(200).send(data)
             })
         } catch (error) {
@@ -16,8 +15,7 @@ export class ProductController {
 
     async List(request: Request, response: Response, next: NextFunction) {
         try {
-            const url = request.params.url || request.token.url
-            return await new ProductService().List(url).then((data) => {
+            return await new AdditionalService().List().then((data) => {
                 return response.status(200).send(data)
             })
         } catch (error) {
@@ -27,7 +25,7 @@ export class ProductController {
 
     async Create(request: Request, response: Response, next: NextFunction) {
         try {
-            return await new ProductService().Create(request.body, request.files, request.token as Token).then((data) => {
+            return await new AdditionalService().Create(request.body).then((data) => {
                 return response.status(201).send(data)
             })
         } catch (error) {
@@ -37,7 +35,7 @@ export class ProductController {
 
     async Edit(request: Request, response: Response, next: NextFunction) {
         try {
-            return await new ProductService().Edit(request.body, request.files, request.token as Token).then((data) => {
+            return await new AdditionalService().Edit(request.body).then((data) => {
                 return response.status(200).send(data)
             })
         } catch (error) {
@@ -47,7 +45,7 @@ export class ProductController {
 
     async Delete(request: Request, response: Response, next: NextFunction) {
         try {
-            return await new ProductService().Delete(request.params.id, request.token as Token).then((data) => {
+            return await new AdditionalService().Delete(request.params.id).then((data) => {
                 return response.status(204).send(data)
             })
         } catch (error) {

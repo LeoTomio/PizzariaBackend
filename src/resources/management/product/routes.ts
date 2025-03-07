@@ -1,10 +1,13 @@
 import express from 'express';
 import { ProductController } from './controller';
 import { verifyTokenLogin } from '../../../middlewares/verifyToken';
+import ProductAdditionalRoutes from './productAdditional/routes';
 
 const router = express.Router();
 
 verifyTokenLogin(router)
+
+router.use('/additionals', ProductAdditionalRoutes);
 
 router.route('/:id').get(new ProductController().GetOne)
 //restaurante
