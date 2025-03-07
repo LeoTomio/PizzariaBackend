@@ -1,4 +1,5 @@
 import prismaClient from '../../src/prisma';
+import createAdditional from './createAdditional';
 import createAdm from './createAdm';
 import createCompany from './createCompany';
 
@@ -6,6 +7,7 @@ import createCompany from './createCompany';
 async function main() {
   await createAdm()
   await createCompany()
+  await createAdditional()
   console.log('Seeds criadas com sucesso!');
 }
 main()
