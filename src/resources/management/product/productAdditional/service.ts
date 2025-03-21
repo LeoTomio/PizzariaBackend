@@ -50,10 +50,23 @@ export class ProductAdditionalService {
         }
 
         return await prismaClient.productAdditional.create({
+            select: {
+                additional: {
+                    select: { name: true },
+                },
+                id: true,
+                price: true,
+            },
             data: {
                 additional_id: productAdditionalCreate.additional_id,
                 product_id: productAdditionalCreate.product_id,
                 price: productAdditionalCreate.price
+            }
+        }).then((item) => {
+            const { additional, ...rest } = item
+            return {
+                ...rest,
+                name: additional.name
             }
         })
     }

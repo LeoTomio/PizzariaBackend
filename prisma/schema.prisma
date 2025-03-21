@@ -50,7 +50,7 @@ model Company {
   Category         Category[]
   Order            Order[]
   User             User?
-  Voucher          Voucher[]
+  Coupon           Coupon[]
 
   @@map("company")
 }
@@ -132,11 +132,11 @@ model Item {
   @@map("items")
 }
 
-model Voucher {
+model Coupon {
   id         String    @id @default(uuid())
   code       String
-  discount   Decimal
-  isActive   Boolean   @default(false)
+  value      Decimal   @db.Decimal(8, 2)
+  isActive   Boolean   @default(true)
   company_id String
   created_at DateTime? @default(now())
   updated_at DateTime? @default(now())
@@ -144,7 +144,7 @@ model Voucher {
   company Company @relation(fields: [company_id], references: [id], onDelete: Cascade)
 
   @@unique([code, company_id])
-  @@map("voucher")
+  @@map("coupon")
 }
 
 model Additional {
@@ -162,7 +162,7 @@ model ProductAdditional {
   id            String     @id @default(uuid())
   product_id    String
   additional_id String
-  price         Decimal
+  price         Decimal    @db.Decimal(8, 2)
   product       Product    @relation(fields: [product_id], references: [id])
   additional    Additional @relation(fields: [additional_id], references: [id])
   created_at    DateTime?  @default(now())

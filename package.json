@@ -1,6 +1,6 @@
 {
   "name": "backend",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "main": "index.js",
   "license": "MIT",
   "engines": {
@@ -11,7 +11,7 @@
     "build": "tsc",
     "start": "node dist/server.js",
     "vercel-build": "prisma generate && prisma migrate deploy",
-    "prisma:generate": "prisma generate",
+    "generate": "prisma generate",
     "migrations": "npx prisma migrate dev",
     "seed": "ts-node ./prisma/seeds/seed.ts"
   },

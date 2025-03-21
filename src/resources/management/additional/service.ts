@@ -1,5 +1,6 @@
 import { Additional } from '@prisma/client';
 import prismaClient from "../../../prisma";
+import moment from 'moment';
 
 export class AdditionalService {
 
@@ -65,7 +66,8 @@ export class AdditionalService {
         }
         return await prismaClient.additional.update({
             data: {
-                name: additionalUpdate.name
+                name: additionalUpdate.name,
+                updated_at: moment().toDate()
             },
             where: {
                 id: additionalUpdate.id

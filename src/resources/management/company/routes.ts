@@ -1,10 +1,13 @@
 import express from 'express';
 import { CompanyController } from '../../../resources/management/company/controller';
 import { verifyTokenLogin } from '../../../middlewares/verifyToken';
+import CouponRoutes from './coupon/routes';
 
 const router = express.Router();
 
 verifyTokenLogin(router)
+
+router.use('/:url/coupon', CouponRoutes);
 
 router.route('/info/:url').get(new CompanyController().GetOne)
 
