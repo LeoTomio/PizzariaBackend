@@ -16,6 +16,7 @@ export class ProductAdditionalService {
                 price: true,
                 additional: {
                     select: {
+                        id: true,
                         name: true
                     }
                 }
@@ -29,6 +30,7 @@ export class ProductAdditionalService {
             const { additional, ...rest } = item
             return {
                 ...rest,
+                additional_id: additional.id,
                 name: additional.name
             }
         })

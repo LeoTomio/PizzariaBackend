@@ -28,8 +28,18 @@ export class CategoryService {
                         banner: true,
                         description: true,
                         promotional_price: true,
-                        unity: true
-
+                        unity: true,
+                        ProductAdditional: {
+                            select: {
+                                additional_id: true,
+                                price: true,
+                                additional: {
+                                    select: {
+                                        name: true
+                                    }
+                                }
+                            }
+                        }
                     },
                 },
             },
@@ -39,7 +49,20 @@ export class CategoryService {
                 }
             },
         }).then((response) => {
-            return response.map(({ created_at, updated_at, company_id, ...rest }) => rest);
+            return response.map(({ created_at, updated_at, company_id, ...rest }) => {
+                return {
+                    ...rest,
+                    products: rest.products.map(({ ProductAdditional, ...product }) => ({
+                        ...product,
+                        additional: ProductAdditional.map(({ additional_id,price, additional }) => ({
+                            id: additional_id,
+                            name: additional.name,
+                            price
+                        }))
+                    }))
+                };
+            });
         });
     }
+
 }
