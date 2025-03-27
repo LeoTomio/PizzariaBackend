@@ -1,136 +1,63 @@
-import { ApiResponse } from "../../config/apiReturn";
 import prismaClient from "../../prisma";
-import { OrderRequest } from "./interface";
+import { OrderCreate } from "./interface";
 
 export class OrderService {
-    async Remove(id: string) {
-        try {
-            await prismaClient.order.delete({
-                where: {
-                    id
-                }
-            })
-            return new ApiResponse('Pedido removido', 200)
-        } catch (error) {
-            console.log(error)
-            return error
-        }
-    }
-
-    async Create(orderData: OrderRequest) {
-        try {
-            return await prismaClient.order.create({
-                data: {
-                    table: orderData.table,
-                    name: orderData.name,
-                    company_id:orderData.company_id
-                }
-            })
-
-            // return new ApiResponse('Pedido adicionado', 200)
-        } catch (error) {
-            console.log(error)
-            return error
-        }
-    }
-
-    async Send(order_id: string) {
-        try {
-            await prismaClient.order.update({
-                data: {
-                    draft: false,
-                },
-                where: {
-                    id: order_id
-                }
-            })
-            return new ApiResponse('Pedido enviado', 200)
-        } catch (error) {
-            console.log(error)
-            return error
-        }
-    }
-
-    async List() {
-        try {
-            const orders = await prismaClient.order.findMany({
-                where: {
-                    draft: false,
-                    status: false,
-                },
-                orderBy: {
-                    created_at: 'desc'
-                }
-            })
-            return orders
-        } catch (error) {
-            console.log(error)
-            return error
-        }
-    }
-
-    async Detail(order_id) {
-        try {
-            // Consulta ao banco de dados
-            const items = await prismaClient.item.findMany({
-                where: {
-                    order_id: order_id
-                },
-                include: {
-                    product: true,
-                    order: true
-                }
+    async Create(url: string, orderCreate: OrderCreate) {
+        return await prismaClient.$transaction(async (prisma) => {
+            const company = await prisma.company.findFirst({
+                select: { id: true },
+                where: { url }
             });
-            if (items.length === 0) {
-                return { message: "Nenhum dado encontrado para este pedido." };
+
+            if (!company) {
+                throw new Error('Empresa não encontrada');
             }
 
-            const orderDetails = {
-                id: items[0].order.id,
-                table: items[0].order.table,
-                status: items[0].order.status,
-                name: items[0].order.name,
-                created_at: items[0].order.created_at,
-                updated_at: items[0].order.updated_at,
-                products: []
-            };
+            let company_id = company.id;
 
-            items.forEach(item => {
-                orderDetails.products.push({
-                    product_id: item.product.id,
-                    name: item.product.name,
-                    price: item.product.price,
-                    description: item.product.description,
-                    banner: item.product.banner,
-                    category_id: item.product.category_id,
-                    amount: item.amount
-                });
-            });
-
-            return orderDetails;
-
-        } catch (error) {
-            console.error(error);
-            throw error;
-        }
-    }
-
-
-
-    async Finish(order_id: string) {
-        try {
-            await prismaClient.order.update({
+            let order = await prisma.order.create({
+                select: { id: true },
                 data: {
-                    status: true
-                },
-                where: {
-                    id: order_id
+                    name: orderCreate.name,
+                    cpf: orderCreate.cpf,
+                    orderType: orderCreate.orderType,
+                    phone: orderCreate.phone,
+                    paymentMethod: orderCreate.paymentMethod,
+                    ...(orderCreate.transshipment && { transshipment: orderCreate.transshipment }),
+                    company_id: company_id,
+                    total: Number(orderCreate.total).toFixed(2)
                 }
-            })
-            return new ApiResponse('Pedido finalizado', 200)
-        } catch (error) {
-            console.log(error)
-            return error
-        }
+            });
+            let order_id = order.id;
+            const { items } = orderCreate;
+
+            await Promise.all(items.map(async (item) => {
+                let createdItem = await prisma.item.create({
+                    select: { id: true },
+                    data: {
+                        quantity: item.quantity,
+                        product_id: item.id,
+                        order_id: order_id,
+                        observation: item.observation
+
+                    }
+                });
+
+                if (item.additional.length) {
+                    const additionalData = item.additional.map((additional) => (
+                        console.log('add', additional), {
+                            quantity: additional.quantity,
+                            additional_id: additional.id,
+                            item_id: createdItem.id
+                        }));
+
+                    await prisma.itemAdditional.createMany({
+                        data: additionalData
+                    });
+
+                }
+            }));
+            return true
+        });
     }
 }

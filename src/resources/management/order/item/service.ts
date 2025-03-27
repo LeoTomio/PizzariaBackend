@@ -1,5 +1,5 @@
-import { ApiResponse } from "../../../config/apiReturn";
-import prismaClient from "../../../prisma";
+import { ApiResponse } from "../../../../config/apiReturn";
+import prismaClient from "../../../../prisma";
 import { ItemAdd, ItemRemove } from "./interface";
 
 export class ItemService {
@@ -7,7 +7,7 @@ export class ItemService {
         try {
             await prismaClient.item.create({
                 data: {
-                    amount: itemData.amount,
+                    quantity: itemData.quantity,
                     order_id: itemData.order_id,
                     product_id: itemData.product_id
 

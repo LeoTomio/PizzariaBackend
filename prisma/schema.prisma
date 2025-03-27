@@ -16,6 +16,24 @@ enum Type {
   USER
 }
 
+enum OrderStatus {
+  RECEIVED
+  PREPARING
+  DELIVERING
+  FINISHED
+}
+
+enum OrderType {
+  retirada
+  entrega
+}
+
+enum PaymentMethod {
+  pix
+  money
+  card
+}
+
 model User {
   id         String    @id @default(uuid())
   name       String    @unique
@@ -102,26 +120,30 @@ model Product {
 }
 
 model Order {
-  id         String    @id @default(uuid())
-  table      Int
-  status     Boolean   @default(false)
-  name       String?
-  draft      Boolean   @default(true)
-  created_at DateTime? @default(now())
-  updated_at DateTime? @default(now())
-  items      Item[]
-  company    Company   @relation(fields: [company_id], references: [id])
-  company_id String
+  id            String        @id @default(uuid())
+  cpf           String
+  name          String
+  orderType     OrderType
+  status        OrderStatus   @default(RECEIVED)
+  paymentMethod PaymentMethod
+  phone         String
+  total         Decimal       @db.Decimal(8, 2)
+  transshipment Decimal?      @db.Decimal(8, 2)
+  created_at    DateTime?     @default(now())
+  updated_at    DateTime?     @default(now())
+  items         Item[]
+  company       Company       @relation(fields: [company_id], references: [id])
+  company_id    String
 
   @@map("orders")
 }
 
 model Item {
-  id     String @id @default(uuid())
-  amount Int
-
-  created_at DateTime? @default(now())
-  updated_at DateTime? @default(now())
+  id          String    @id @default(uuid())
+  quantity    Int
+  observation String?
+  created_at  DateTime? @default(now())
+  updated_at  DateTime? @default(now())
 
   order          Order            @relation(fields: [order_id], references: [id])
   product        Product          @relation(fields: [product_id], references: [id])
@@ -180,4 +202,14 @@ model ItemAdditional {
   item_id       String?
 
   @@map("item_additional")
+}
+
+model Address {
+  id             String  @id @default(uuid())
+  number         Int
+  complement     String?
+  referencePoint String
+  neighborhood   String
+  street         String
+  city           String
 }

@@ -1,12 +1,32 @@
-interface OrderRequest {
-    table: number;
-    name: string;
-    company_id:string
+import { ItemAdditional, OrderType, PaymentMethod } from "@prisma/client";
+
+export interface OrderCreate {
+    items: Array<Items>
+    cpf: string,
+    orderType: OrderType,
+    name: string,
+    paymentMethod: PaymentMethod,
+    phone: string,
+    transshipment?: string,
+    total: string
+    neighborhood: string,
+    street: string,
+    city: string,
+    complement?: string,
+    number: string,
+    referencePoint: string,
 }
 
 
-interface OrderRemove {
-    order_id: string;
+interface Items {
+    id: string
+    quantity: number,
+    additional?: Array<Additional>;
+    observation?: string
 }
 
-export { OrderRequest, OrderRemove };
+
+interface Additional {
+    quantity: number;
+    id: string
+}

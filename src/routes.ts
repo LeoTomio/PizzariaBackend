@@ -19,7 +19,7 @@ router.get('/status', (req, res) => {
 router.use('/user', UserRoutes);
 router.use('/category', CategoryRoutes);
 router.use('/company', CompanyRoutes);
-// router.use('/product', ProductRoutes);
+router.use('/order', OrderRoutes);
 
 // Middleware de autenticação
 router.use(async (req, res, next) => {
@@ -36,7 +36,6 @@ router.use(async (req, res, next) => {
 
 // Rotas protegidas
 router.use('/management', ManagementRoutes);
-router.use('/order', OrderRoutes);
 
 
 router.use(errorHandler);
