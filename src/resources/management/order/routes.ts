@@ -13,9 +13,9 @@ router.delete('/:id', new OrderController().Remove)
 
 router.put('/send/:id', new OrderController().Send)
 
-router.get('/list', new OrderController().List)
+router.get('/:url', new OrderController().List)
 
-router.get('/detail/:id', new OrderController().Detail)
+router.get('/:url/:id', new OrderController().GetOne)
 
 router.put('/finish/:id', new OrderController().Finish)
 

@@ -30,8 +30,8 @@ enum OrderType {
 
 enum PaymentMethod {
   pix
-  money
-  card
+  dinheiro
+  cartao
 }
 
 model User {
@@ -121,6 +121,7 @@ model Product {
 
 model Order {
   id            String        @id @default(uuid())
+  number        Int           @default(autoincrement())
   cpf           String
   name          String
   orderType     OrderType

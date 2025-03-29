@@ -1,5 +1,7 @@
 import prismaClient from "../../prisma";
+import { getIO } from "../../websockets/socketHandlers";
 import { OrderCreate } from "./interface";
+import { emitNewOrder } from "./websocket";
 
 export class OrderService {
     async Create(url: string, orderCreate: OrderCreate) {
@@ -16,7 +18,10 @@ export class OrderService {
             let company_id = company.id;
 
             let order = await prisma.order.create({
-                select: { id: true },
+                select: {
+                    id: true,
+                    number: true
+                },
                 data: {
                     name: orderCreate.name,
                     cpf: orderCreate.cpf,
@@ -44,12 +49,11 @@ export class OrderService {
                 });
 
                 if (item.additional.length) {
-                    const additionalData = item.additional.map((additional) => (
-                        console.log('add', additional), {
-                            quantity: additional.quantity,
-                            additional_id: additional.id,
-                            item_id: createdItem.id
-                        }));
+                    const additionalData = item.additional.map((additional) => ({
+                        quantity: additional.quantity,
+                        additional_id: additional.id,
+                        item_id: createdItem.id
+                    }));
 
                     await prisma.itemAdditional.createMany({
                         data: additionalData
@@ -57,6 +61,9 @@ export class OrderService {
 
                 }
             }));
+
+            emitNewOrder(url, order)
+
             return true
         });
     }

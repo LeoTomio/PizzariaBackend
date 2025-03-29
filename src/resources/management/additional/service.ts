@@ -32,7 +32,6 @@ export class AdditionalService {
     }
 
     async Create(additionalCreate: Additional) {
-        console.log(additionalCreate)
         const exist = !!await prismaClient.additional.findFirst({
             where: {
                 name: additionalCreate.name

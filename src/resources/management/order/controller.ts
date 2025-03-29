@@ -1,4 +1,4 @@
-import { Request, response, Response } from "express";
+import { NextFunction, Request, response, Response } from "express";
 import { OrderService } from "./service";
 
 export class OrderController {
@@ -9,35 +9,40 @@ export class OrderController {
         return respose.json(order);
     }
 
-    async Remove(request: Request, response: Response) {
+    async Remove(request: Request, response: Response, next: NextFunction) {
         const removeOrder = new OrderService();
         const order = await removeOrder.Remove(request.params.id);
 
         return response.json(order);
     }
 
-    async Send(request: Request, response: Response) {
+    async Send(request: Request, response: Response, next: NextFunction) {
         const sendOrder = new OrderService();
         const order = await sendOrder.Send(request.params.id);
 
         return response.json(order);
     }
-
-    async List(request: Request, response: Response) {
-        const listOrders = new OrderService();
-        const orders = await listOrders.List();
-
-        return response.json(orders);
+    async List(request: Request, response: Response, next: NextFunction) {
+        try {
+            return await new OrderService().List(request.params.url).then((data) => {
+                return response.status(200).send(data)
+            })
+        } catch (error) {
+            next(error)
+        }
     }
 
-    async Detail(request: Request, response: Response) {
-        const detailOrder = new OrderService();
-        const order = await detailOrder.Detail(request.params.id);
-
-        return response.json(order)
+    async GetOne(request: Request, response: Response, next: NextFunction) {
+        try {
+            return await new OrderService().GetOne(request.params.url, request.params.id).then((data) => {
+                return response.status(200).send(data)
+            })
+        } catch (error) {
+            next(error)
+        }
     }
 
-    async Finish(request: Request, response: Response) {
+    async Finish(request: Request, response: Response, next: NextFunction) {
         const finishOrder = new OrderService();
         const order = await finishOrder.Finish(request.params.id);
 

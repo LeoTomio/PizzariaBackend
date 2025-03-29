@@ -1,3 +1,4 @@
+import moment from "moment";
 import { ApiResponse } from "../../../config/apiReturn";
 import prismaClient from "../../../prisma";
 import { OrderRequest } from "./interface";
@@ -51,86 +52,119 @@ export class OrderService {
         // }
     }
 
-    async List() {
-        // try {
-        //     const orders = await prismaClient.order.findMany({
-        //         where: {
-        //             draft: false,
-        //             status: false,
-        //         },
-        //         orderBy: {
-        //             created_at: 'desc'
-        //         }
-        //     })
-        //     return orders
-        // } catch (error) {
-        //     console.log(error)
-        //     return error
-        // }
+    async List(url: string) {
+        const orders = await prismaClient.order.findMany({
+            select: {
+                id: true,
+                number: true
+            },
+            where: {
+                company: {
+                    url: url
+                },
+                status: {
+                    notIn: ["DELIVERING","FINISHED"]
+
+
+                }
+            },
+            orderBy: {
+                created_at: 'desc'
+            }
+        })
+        return orders
     }
 
-    async Detail(order_id) {
-        // try {
-        //     // Consulta ao banco de dados
-        //     const items = await prismaClient.item.findMany({
-        //         where: {
-        //             order_id: order_id
-        //         },
-        //         include: {
-        //             product: true,
-        //             order: true
-        //         }
-        //     });
-        //     if (items.length === 0) {
-        //         return { message: "Nenhum dado encontrado para este pedido." };
-        //     }
+    async GetOne(url: string, id: string) {
+        return await prismaClient.$transaction(async (prisma) => {
+            return await prisma.order.findFirst({
+                select: {
+                    name: true,
+                    number: true,
+                    phone: true,
+                    orderType: true,
+                    paymentMethod: true,
+                    transshipment: true,
+                    total: true,
+                    created_at: true,
+                    items: {
+                        select: {
+                            quantity: true,
+                            observation: true,
+                            product: {
+                                select: {
+                                    name: true,
+                                    price: true
+                                }
+                            },
+                            ItemAdditional: {
+                                select: {
+                                    quantity: true,
+                                    additional: {
+                                        select: {
+                                            name: true,
+                                            ProductAdditional: {
+                                                select: {
+                                                    price: true
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                where: {
+                    id,
+                    company: {
+                        url
+                    }
+                }
+            }).then((order) => {
+                const { items, created_at, ...restOrder } = order;
+                const formattedItems = items.map((item) => {
+                    const { ItemAdditional, product, ...restItem } = item;
 
-        //     const orderDetails = {
-        //         id: items[0].order.id,
-        //         table: items[0].order.table,
-        //         status: items[0].order.status,
-        //         name: items[0].order.name,
-        //         created_at: items[0].order.created_at,
-        //         updated_at: items[0].order.updated_at,
-        //         products: []
-        //     };
+                    const additionals = ItemAdditional.map((additional) => ({
+                        name: additional.additional.name,
+                        quantity: additional.quantity,
+                        price: parseFloat(String(additional.additional.ProductAdditional[0].price).replace(",", "."))
+                    }));
 
-        //     items.forEach(item => {
-        //         orderDetails.products.push({
-        //             product_id: item.product.id,
-        //             name: item.product.name,
-        //             price: item.product.price,
-        //             description: item.product.description,
-        //             banner: item.product.banner,
-        //             category_id: item.product.category_id,
-        //             amount: item.amount
-        //         });
-        //     });
+                    return {
+                        ...restItem,
+                        name: product.name,
+                        price: parseFloat(String(product.price).replace(",", ".")),
+                        additionals
+                    };
+                });
 
-        //     return orderDetails;
-
-        // } catch (error) {
-        //     console.error(error);
-        //     throw error;
-        // }
+                return {
+                    ...restOrder,
+                    created_at: moment(created_at).format('HH:mm:ss DD/MM/YYYY'),
+                    items: formattedItems
+                };
+            });
+        })
     }
 
 
 
     async Finish(order_id: string) {
-    //     try {
-    //         await prismaClient.order.update({
-    //             data: {
-    //                 status: true
-    //             },
-    //             where: {
-    //                 id: order_id
-    //             }
-    //         })
-    //         return new ApiResponse('Pedido finalizado', 200)
-    //     } catch (error) {
-    //         console.log(error)
-    //         return error
-    //     }
+        //     try {
+        //         await prismaClient.order.update({
+        //             data: {
+        //                 status: true
+        //             },
+        //             where: {
+        //                 id: order_id
+        //             }
+        //         })
+        //         return new ApiResponse('Pedido finalizado', 200)
+        //     } catch (error) {
+        //         console.log(error)
+        //         return error
+        //     }
     }
 }
