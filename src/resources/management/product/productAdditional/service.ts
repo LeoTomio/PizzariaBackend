@@ -73,10 +73,10 @@ export class ProductAdditionalService {
         })
     }
 
-    async Edit(productAdditionalUpdate: ProductAdditional) {
+    async Edit(id: string, price: string) {
         const exist = !!await prismaClient.productAdditional.findFirst({
             where: {
-                id: productAdditionalUpdate.id
+                id: id
             }
         })
         if (!exist) {
@@ -87,10 +87,10 @@ export class ProductAdditionalService {
         }
         return await prismaClient.productAdditional.update({
             data: {
-                price: productAdditionalUpdate.price
+                price: price
             },
             where: {
-                id: productAdditionalUpdate.id
+                id: id
             }
         })
     }

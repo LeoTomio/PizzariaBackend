@@ -1,84 +1,42 @@
 import moment from "moment";
-import { ApiResponse } from "../../../config/apiReturn";
 import prismaClient from "../../../prisma";
-import { OrderRequest } from "./interface";
+import { OrderStatus } from "@prisma/client";
 
 export class OrderService {
-    async Remove(id: string) {
-        // try {
-        //     await prismaClient.order.delete({
-        //         where: {
-        //             id
-        //         }
-        //     })
-        //     return new ApiResponse('Pedido removido', 200)
-        // } catch (error) {
-        //     console.log(error)
-        //     return error
-        // }
-    }
-
-    async Create(orderData: OrderRequest) {
-        // try {
-        //     return await prismaClient.order.create({
-        //         data: {
-        //             table: orderData.table,
-        //             name: orderData.name,
-        //             company_id:orderData.company_id
-        //         }
-        //     })
-
-        //     // return new ApiResponse('Pedido adicionado', 200)
-        // } catch (error) {
-        //     console.log(error)
-        //     return error
-        // }
-    }
-
-    async Send(order_id: string) {
-        // try {
-        //     await prismaClient.order.update({
-        //         data: {
-        //             draft: false,
-        //         },
-        //         where: {
-        //             id: order_id
-        //         }
-        //     })
-        //     return new ApiResponse('Pedido enviado', 200)
-        // } catch (error) {
-        //     console.log(error)
-        //     return error
-        // }
-    }
-
+ 
     async List(url: string) {
+        const today = new Date();
+        const startOfDay = new Date(today.setHours(0, 0, 0, 0)); // Começo do dia
+        const endOfDay = new Date(today.setHours(23, 59, 59, 999)); // Fim do dia
+
         const orders = await prismaClient.order.findMany({
             select: {
                 id: true,
-                number: true
+                number: true,
+                status: true
             },
             where: {
                 company: {
                     url: url
                 },
-                status: {
-                    notIn: ["DELIVERING","FINISHED"]
-
-
+                created_at: {
+                    gte: startOfDay,
+                    lte: endOfDay,
                 }
             },
             orderBy: {
                 created_at: 'desc'
             }
-        })
-        return orders
+        });
+
+        return orders;
     }
 
     async GetOne(url: string, id: string) {
         return await prismaClient.$transaction(async (prisma) => {
             return await prisma.order.findFirst({
                 select: {
+                    id: true,
                     name: true,
                     number: true,
                     phone: true,
@@ -87,6 +45,7 @@ export class OrderService {
                     transshipment: true,
                     total: true,
                     created_at: true,
+                    status: true,
                     items: {
                         select: {
                             quantity: true,
@@ -149,22 +108,16 @@ export class OrderService {
         })
     }
 
-
-
-    async Finish(order_id: string) {
-        //     try {
-        //         await prismaClient.order.update({
-        //             data: {
-        //                 status: true
-        //             },
-        //             where: {
-        //                 id: order_id
-        //             }
-        //         })
-        //         return new ApiResponse('Pedido finalizado', 200)
-        //     } catch (error) {
-        //         console.log(error)
-        //         return error
-        //     }
+    async ChangeStatus(id: string, status: OrderStatus) {
+        return prismaClient.$transaction(async (prisma) => {
+            return !!await prisma.order.update({
+                data: {
+                    status
+                },
+                where: {
+                    id
+                }
+            })
+        })
     }
 }

@@ -2,6 +2,7 @@ import { ItemAdditional, OrderType, PaymentMethod } from "@prisma/client";
 
 export interface OrderCreate {
     items: Array<Items>
+    coupon: string
     cpf: string,
     orderType: OrderType,
     name: string,

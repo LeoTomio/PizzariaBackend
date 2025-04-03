@@ -24,8 +24,8 @@ export class ProductAdditionalController {
     }
 
     async Edit(request: Request, response: Response, next: NextFunction) {
-        try {
-            return await new ProductAdditionalService().Edit(request.body).then((data) => {
+        try { 
+            return await new ProductAdditionalService().Edit(request.params.id, request.body.price).then((data) => {
                 return response.status(200).send(data)
             })
         } catch (error) {

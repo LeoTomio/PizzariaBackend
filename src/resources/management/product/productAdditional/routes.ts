@@ -10,7 +10,7 @@ router.route('/:product_id').get(new ProductAdditionalController().GetList)
 
 router.route('/').post(new ProductAdditionalController().Create)
 
-router.route('/').put(new ProductAdditionalController().Edit)
+router.route('/:id').put(new ProductAdditionalController().Edit)
 
 router.route('/:id').delete(new ProductAdditionalController().Delete)
 

@@ -17,10 +17,10 @@ enum Type {
 }
 
 enum OrderStatus {
-  RECEIVED
   PREPARING
   DELIVERING
   FINISHED
+  CANCELED
 }
 
 enum OrderType {
@@ -125,11 +125,13 @@ model Order {
   cpf           String
   name          String
   orderType     OrderType
-  status        OrderStatus   @default(RECEIVED)
+  status        OrderStatus   @default(PREPARING)
   paymentMethod PaymentMethod
   phone         String
   total         Decimal       @db.Decimal(8, 2)
   transshipment Decimal?      @db.Decimal(8, 2)
+  coupon        Coupon?       @relation(fields: [coupon_id], references: [id])
+  coupon_id     String?
   created_at    DateTime?     @default(now())
   updated_at    DateTime?     @default(now())
   items         Item[]
@@ -165,6 +167,7 @@ model Coupon {
   updated_at DateTime? @default(now())
 
   company Company @relation(fields: [company_id], references: [id], onDelete: Cascade)
+  Order   Order[]
 
   @@unique([code, company_id])
   @@map("coupon")

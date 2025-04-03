@@ -1,5 +1,4 @@
 import prismaClient from "../../prisma";
-import { getIO } from "../../websockets/socketHandlers";
 import { OrderCreate } from "./interface";
 import { emitNewOrder } from "./websocket";
 
@@ -16,13 +15,28 @@ export class OrderService {
             }
 
             let company_id = company.id;
+            let coupon_id
+            if (orderCreate.coupon) {
+                coupon_id = (await prisma.coupon.findFirst({
+                    select: {
+                        id: true
+                    },
+                    where: {
+                        code: orderCreate.coupon,
+                        company_id: company.id
+                    }
+                })).id
+            }
+
 
             let order = await prisma.order.create({
                 select: {
                     id: true,
-                    number: true
+                    number: true,
+                    status: true
                 },
                 data: {
+                    coupon_id: coupon_id,
                     name: orderCreate.name,
                     cpf: orderCreate.cpf,
                     orderType: orderCreate.orderType,
@@ -58,13 +72,12 @@ export class OrderService {
                     await prisma.itemAdditional.createMany({
                         data: additionalData
                     });
-
                 }
             }));
 
             emitNewOrder(url, order)
 
-            return true
+            return { number: order.number }
         });
     }
 }
