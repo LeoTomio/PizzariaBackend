@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import { Token } from '../resources/user/interface';
+import { Token } from '../resources/management/user/interface';
 
 export function tokenDecodifier(token) {
     const tokenSplit = token?.split(' ')[1];

@@ -2,8 +2,8 @@ import prismaClient from "../../prisma";
 import { hash } from 'bcryptjs'
 import { compare } from "bcryptjs";
 import { sign } from 'jsonwebtoken'
-import { AuthRequest, UserRequest } from "./interface";
 import { User } from "@prisma/client";
+import { AuthRequest, UserRequest } from "../management/user/interface";
 
 export class UserService {
 

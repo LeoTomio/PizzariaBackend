@@ -1,22 +1,20 @@
 import express from 'express';
-import { verifyTokenLogin } from '../../../../middlewares/verifyToken';
 import { CouponController } from './controller';
+import { permissionGuard } from '../../../../middlewares/tokenAuthorization';
 
 const router = express.Router({ mergeParams: true });
 
-verifyTokenLogin(router)
+router.route('/:id').get(permissionGuard, new CouponController().GetOne)
 
-router.route('/:id').get(new CouponController().GetOne)
+router.route('/').get(permissionGuard, new CouponController().List)
 
-router.route('/').get(new CouponController().List)
+router.route('/').post(permissionGuard, new CouponController().Create)
 
-router.route('/').post(new CouponController().Create)
+router.route('/changeStatus/:id').put(permissionGuard, new CouponController().ChangeStatus)
 
-router.route('/changeStatus/:id').put(new CouponController().ChangeStatus)
+router.route('/').put(permissionGuard, new CouponController().Edit)
 
-router.route('/').put(new CouponController().Edit)
-
-router.route('/:id').delete(new CouponController().Delete)
+router.route('/:id').delete(permissionGuard, new CouponController().Delete)
 
 export default router;
 

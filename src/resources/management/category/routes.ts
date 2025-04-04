@@ -1,20 +1,18 @@
 import express from 'express';
 import { CategoryController } from './controller';
-import { verifyTokenLogin } from '../../../middlewares/verifyToken';
+import { permissionGuard } from '../../../middlewares/tokenAuthorization';
 
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
 
-verifyTokenLogin(router)
+router.route('/:id').get(permissionGuard, new CategoryController().GetOne)
 
-router.route('/:id').get(new CategoryController().GetOne)
+router.route('/list/:url').get(permissionGuard, new CategoryController().List)
 
-router.route('/list/:url').get(new CategoryController().List)
+router.route('/').post(permissionGuard, new CategoryController().Create)
 
-router.route('/').post(new CategoryController().Create)
+router.route('/').put(permissionGuard, new CategoryController().Edit)
 
-router.route('/').put(new CategoryController().Edit)
-
-router.route('/:id').delete(new CategoryController().Delete)
+router.route('/:id').delete(permissionGuard, new CategoryController().Delete)
 
 export default router;
 

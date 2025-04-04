@@ -1,27 +1,25 @@
 import express from 'express';
 import { CompanyController } from '../../../resources/management/company/controller';
-import { verifyTokenLogin } from '../../../middlewares/verifyToken';
 import CouponRoutes from './coupon/routes';
+import { permissionGuard } from '../../../middlewares/tokenAuthorization';
 
-const router = express.Router();
-
-verifyTokenLogin(router)
+const router = express.Router({ mergeParams: true });
 
 router.use('/:url/coupon', CouponRoutes);
 
-router.route('/info/:url').get(new CompanyController().GetOne)
+router.route('/info/:url').get(permissionGuard, new CompanyController().GetOne)
 
-router.route('/').get(new CompanyController().List)
+router.route('/').get(permissionGuard, new CompanyController().List)
 
-router.route('/').post(new CompanyController().Create)
+router.route('/').post(permissionGuard, new CompanyController().Create)
 
-router.route('/').put(new CompanyController().Edit)
+router.route('/').put(permissionGuard, new CompanyController().Edit)
 
-router.route('/:id').delete(new CompanyController().Delete)
+router.route('/:id').delete(permissionGuard, new CompanyController().Delete)
 
-router.route('/changeStatus/:url').put(new CompanyController().changeStatus)
+router.route('/changeStatus/:url').put(permissionGuard, new CompanyController().changeStatus)
 
-router.route('/changeOperational/:id').put(new CompanyController().changeOperational)
+router.route('/changeOperational/:id').put(permissionGuard, new CompanyController().changeOperational)
 
 
 export default router;

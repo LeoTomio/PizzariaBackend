@@ -4,7 +4,7 @@ import { OrderService } from "./service";
 export class OrderController {
 
     async List(request: Request, response: Response, next: NextFunction) {
-        try {
+        try { 
             return await new OrderService().List(request.params.url).then((data) => {
                 return response.status(200).send(data)
             })
@@ -14,7 +14,7 @@ export class OrderController {
     }
 
     async GetOne(request: Request, response: Response, next: NextFunction) {
-        try {
+        try { 
             return await new OrderService().GetOne(request.params.url, request.params.id).then((data) => {
                 return response.status(200).send(data)
             })

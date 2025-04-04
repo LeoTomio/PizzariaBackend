@@ -1,8 +1,8 @@
 import { Company, Coupon } from '@prisma/client';
 import prismaClient from '../../../../prisma';
-import { Token } from '../../../user/interface';
 import { CompanyEdit } from './interface';
 import moment from 'moment';
+import { Token } from '../../user/interface';
 
 export class CouponService {
 

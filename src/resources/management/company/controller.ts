@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
-import { CompanyService } from "./service";
-import { Token } from "../../user/interface";
+import { CompanyService } from "./service"; 
+import { Token } from "../user/interface";
 
 export class CompanyController {
 

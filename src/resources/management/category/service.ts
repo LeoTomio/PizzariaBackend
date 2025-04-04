@@ -1,7 +1,7 @@
 import { Category, Company } from '@prisma/client';
 import moment from 'moment';
-import prismaClient from "../../../prisma";
-import { Token } from '../../user/interface';
+import prismaClient from "../../../prisma"; 
+import { Token } from '../user/interface';
 
 export class CategoryService {
 

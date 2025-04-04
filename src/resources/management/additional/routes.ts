@@ -1,21 +1,18 @@
 import express from 'express';
 import { AdditionalController } from './controller';
-import { verifyTokenLogin } from '../../../middlewares/verifyToken';
+import { permissionGuard } from '../../../middlewares/tokenAuthorization';
 
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
 
-verifyTokenLogin(router)
+router.route('/').get(permissionGuard, new AdditionalController().List)
 
-//adm
-router.route('/').get(new AdditionalController().List)
+router.route('/:id').get(permissionGuard, new AdditionalController().GetOne)
 
-router.route('/:id').get(new AdditionalController().GetOne)
+router.route('/').post(permissionGuard, new AdditionalController().Create)
 
-router.route('/').post(new AdditionalController().Create)
+router.route('/').put(permissionGuard, new AdditionalController().Edit)
 
-router.route('/').put(new AdditionalController().Edit)
-
-router.route('/:id').delete(new AdditionalController().Delete)
+router.route('/:id').delete(permissionGuard, new AdditionalController().Delete)
 
 
 export default router;

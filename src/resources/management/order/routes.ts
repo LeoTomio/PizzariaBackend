@@ -1,16 +1,14 @@
 import express from 'express';
-import { verifyTokenLogin } from '../../../middlewares/verifyToken';
 import { OrderController } from './controller';
+import { permissionGuard } from '../../../middlewares/tokenAuthorization';
 
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
 
-// verifyTokenLogin(router)
+router.route('/:url').get(permissionGuard, new OrderController().List)
 
-router.get('/:url', new OrderController().List)
+router.route('/:url/:id').get(permissionGuard, new OrderController().GetOne)
 
-router.get('/:url/:id', new OrderController().GetOne)
-
-router.patch('/:url/changeStatus/:id', new OrderController().ChangeStatus)
+router.route('/:url/changeStatus/:id').patch(permissionGuard, new OrderController().ChangeStatus)
 
 
 export default router;
