@@ -1,7 +1,7 @@
 
-import { NextFunction, Request, Response } from "express";
-import { Token } from "../../user/interface";
+import { NextFunction, Request, Response } from "express"; 
 import { ProductService } from "./service";
+import { Token } from "../user/interface";
 export class ProductController {
 
     async GetOne(request: Request, response: Response, next: NextFunction) {

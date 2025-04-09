@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
-import { CouponService } from "./service";
-import { Token } from "../../../user/interface";
+import { CouponService } from "./service"; 
+import { Token } from "../../user/interface";
 
 export class CouponController {
 

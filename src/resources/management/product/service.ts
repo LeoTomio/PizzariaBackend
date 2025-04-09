@@ -1,13 +1,11 @@
 import { Category, Product } from '@prisma/client';
+import { UploadedFile } from 'express-fileupload';
 import moment from 'moment';
-import path from 'path';
-import { MulterFunction } from "../../../config/multer";
+import { uploadImage } from '../../../externalServices/cloudinary';
 import prismaClient from "../../../prisma";
 import { moneyFormater } from '../../../utils/moneyFormat';
-import { Token } from '../../user/interface';
 import { CategoryService } from '../category/service';
-import { UploadedFile } from 'express-fileupload';
-import { uploadImage } from '../../../externalServices/cloudinary';
+import { Token } from '../user/interface';
 
 export class ProductService {
 

@@ -1,6 +1,6 @@
 import { Category, Company } from '@prisma/client';
 import moment from 'moment';
-import prismaClient from "../../../prisma"; 
+import prismaClient from "../../../prisma";
 import { Token } from '../user/interface';
 
 export class CategoryService {
@@ -28,42 +28,26 @@ export class CategoryService {
         return category
     }
 
-    async List(url: string, token: Token) {
-        const categories = await prismaClient.category.findMany({
+    async List(url: string) {
+        return await prismaClient.category.findMany({
             select: {
                 id: true,
                 name: true,
-                company: {
-                    select: {
-                        url: true
-                    }
-                }
             },
             where: {
-                company: { url: url }
+                company: { url }
             },
             orderBy: {
                 name: 'asc',
             },
         });
-
-        return categories.map((category) => {
-            if (category.company) {
-                return {
-                    ...category,
-                    url: category.company.url,
-                };
-            }
-            return category;
-        });
     }
 
-    async Create(category: Category & Pick<Company, 'url'>, token: Token) {
-        const { url, ...categoryData } = category
+    async Create(category: Category, url: string, token: Token) {
         const company = await prismaClient.company.findFirst({
             select: { id: true },
             where: {
-                url: category.url
+                url: url
             }
         })
 
@@ -77,7 +61,7 @@ export class CategoryService {
 
         return await prismaClient.category.create({
             data: {
-                ...categoryData,
+                name: category.name,
                 company_id: company.id || token.company_id
             },
             select: {

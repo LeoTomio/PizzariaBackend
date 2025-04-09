@@ -2,10 +2,10 @@ import { Company, Type, User } from '@prisma/client';
 import { hash } from 'bcryptjs';
 import { Weekdays } from '../../../enumerators/weekdays';
 import prismaClient from "../../../prisma";
-import { Token } from '../../user/interface';
 import { CompanyEdit } from './interface';
 import { UploadedFile } from 'express-fileupload';
 import { uploadImage } from '../../../externalServices/cloudinary';
+import { Token } from '../user/interface';
 
 export class CompanyService {
 
