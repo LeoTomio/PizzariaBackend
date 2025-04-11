@@ -3,7 +3,7 @@ import { UserService } from "./service";
 
 export class UserController {
     async detailUser(request: Request, response: Response, next: NextFunction) {
-        try { 
+        try {
             return await new UserService().DetailUser(request.token.sub).then((data) => {
                 return response.status(200).send(data)
             })
@@ -26,7 +26,6 @@ export class UserController {
         try {
             return await new UserService().AuthUser(request.body).then((data) => {
                 return response.status(200).send(data)
-
             })
         } catch (error) {
             next(error)

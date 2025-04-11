@@ -34,6 +34,13 @@ enum PaymentMethod {
   cartao
 }
 
+enum Method {
+  GET
+  POST
+  PUT
+  DELETE
+}
+
 model User {
   id         String    @id @default(uuid())
   name       String    @unique
@@ -44,6 +51,8 @@ model User {
   company_id String?   @unique
   created_at DateTime? @default(now())
   updated_at DateTime? @default(now())
+
+  Log Log[]
 
   @@map("users")
 }
@@ -69,6 +78,7 @@ model Company {
   Order            Order[]
   User             User?
   Coupon           Coupon[]
+  Log              Log[]
 
   @@map("company")
 }
@@ -216,4 +226,20 @@ model Address {
   neighborhood   String
   street         String
   city           String
+}
+
+model Log {
+  id         String    @id @default(uuid())
+  requestUrl String
+  method     Method
+  message    String
+  metadata   Json?
+  status     Int
+  created_at DateTime? @default(now())
+  Company    Company   @relation(fields: [company_id], references: [id])
+  company_id String
+  User       User?     @relation(fields: [user_id], references: [id])
+  user_id    String?
+
+  @@map("log")
 }

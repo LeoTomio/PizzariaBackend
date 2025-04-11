@@ -78,10 +78,7 @@ export class UserService {
             }
         )
         return {
-            id: user.id,
-            name: user.name,
-            email: user.email,
-            type: user.type,
+            url: user?.company?.url,
             token: token
         }
     }

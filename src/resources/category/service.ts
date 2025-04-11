@@ -1,5 +1,3 @@
-import { Category } from '@prisma/client';
-import moment from 'moment';
 import prismaClient from '../../prisma';
 export class CategoryService {
 
@@ -13,8 +11,6 @@ export class CategoryService {
                 id,
             },
         });
-
-        //quando tiver as opções de adicionais, será necessario vincular aq tbm
     }
 
     async List(url: string) {
@@ -54,7 +50,7 @@ export class CategoryService {
                     ...rest,
                     products: rest.products.map(({ ProductAdditional, ...product }) => ({
                         ...product,
-                        additional: ProductAdditional.map(({ additional_id,price, additional }) => ({
+                        additional: ProductAdditional.map(({ additional_id, price, additional }) => ({
                             id: additional_id,
                             name: additional.name,
                             price
