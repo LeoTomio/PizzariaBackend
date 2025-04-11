@@ -19,10 +19,10 @@ export class OrderService {
                 company: {
                     url: url
                 },
-                created_at: {
-                    gte: startOfDay,
-                    lte: endOfDay,
-                }
+                // created_at: {
+                //     gte: startOfDay,
+                //     lte: endOfDay,
+                // }
             },
             orderBy: {
                 created_at: 'desc'

@@ -6,6 +6,7 @@ export class OrderController {
     async List(request: Request, response: Response, next: NextFunction) {
         try { 
             return await new OrderService().List(request.params.url).then((data) => {
+                response.locals.message = "Listagem de pedidos";
                 return response.status(200).send(data)
             })
         } catch (error) {

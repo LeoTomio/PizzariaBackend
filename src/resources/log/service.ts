@@ -14,9 +14,8 @@ export class LogService {
         }
 
         if (data.metadata) {
-            data.metadata = JSON.stringify(data.metadata)
+            data.metadata = this.sanitizeMetadata(data.metadata);
         }
-
         return await prismaClient.log.create({
             data: {
                 ...rest,
@@ -25,6 +24,17 @@ export class LogService {
         });
     }
 
+
+    public sanitizeMetadata(metadata: any) {
+        const clone = { ...metadata };
+
+        if ('password' in clone.data) {
+            clone.data.password = '******';
+        }
+        return JSON.stringify(clone);
+    }
 }
+
+
 
 

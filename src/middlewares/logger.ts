@@ -17,23 +17,9 @@ export async function logMiddleware(request: Request, response: Response, next: 
             return originalSend(body);
         };
     }
-    const generateMessage = (request: Request) => {
-        if (shouldCaptureResponse) {
-            return `Login realizado ${request.originalUrl}`;
-        }
-        if (request.method === 'POST') {
-            return `Criando novo registro em ${request.originalUrl}`;
-        } else if (request.method === 'GET') {
-            return `Acessando dados em ${request.originalUrl}`;
-        } else if (request.method === 'PUT') {
-            return `Atualizando registro em ${request.originalUrl}`;
-        } else if (request.method === 'DELETE') {
-            return `Deletando registro em ${request.originalUrl}`;
-        }
-        return `Ação não identificada em ${request.originalUrl}`;
-    };
 
     response.on("finish", () => {
+        console.log('locals', response.locals.logMessage)
         if (skipLogRoutes.includes(request.originalUrl)) {
             return;
         }
@@ -41,10 +27,10 @@ export async function logMiddleware(request: Request, response: Response, next: 
         if (shouldCaptureResponse) {
             url = JSON.parse(responseBody).url
         }
-
+        console.log('url', url)
         new LogService().LogRegister({
             requestUrl: request.originalUrl,
-            message: generateMessage(request),
+            message: response.locals.logMessage || '', 
             metadata: {
                 data: request.body || request.query || request.params || {}
             },
