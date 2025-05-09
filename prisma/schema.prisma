@@ -79,6 +79,7 @@ model Company {
   User             User?
   Coupon           Coupon[]
   Log              Log[]
+  CompanyStyle     CompanyStyle?
 
   @@map("company")
 }
@@ -236,10 +237,23 @@ model Log {
   metadata   Json?
   status     Int
   created_at DateTime? @default(now())
-  Company    Company   @relation(fields: [company_id], references: [id])
-  company_id String
+  Company    Company?  @relation(fields: [company_id], references: [id])
+  company_id String?
   User       User?     @relation(fields: [user_id], references: [id])
   user_id    String?
 
   @@map("log")
+}
+
+model CompanyStyle {
+  id              String    @id @default(uuid())
+  textColor       String?
+  buttonColor     String?
+  backgroundColor String?
+  created_at      DateTime? @default(now())
+  updated_at      DateTime? @default(now())
+  company_id      String    @unique
+  Company         Company   @relation(fields: [company_id], references: [id])
+
+  @@map("company_style")
 }

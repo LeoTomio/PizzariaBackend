@@ -3,7 +3,7 @@ import { Token } from '../resources/management/user/interface';
 
 export async function permissionGuard(req: Request, res: Response, next: NextFunction) {
     const token: Token = req.token;
-    console.warn('Rota acessada:', req.originalUrl);
+    // console.warn('Rota acessada:', req.originalUrl);
     // console.error('token', token.url)
     // console.log('params', req.params?.url)
     // console.log('query', req.query?.url)

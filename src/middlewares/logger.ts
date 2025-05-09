@@ -19,7 +19,6 @@ export async function logMiddleware(request: Request, response: Response, next: 
     }
 
     response.on("finish", () => {
-        console.log('locals', response.locals.logMessage)
         if (skipLogRoutes.includes(request.originalUrl)) {
             return;
         }
@@ -27,10 +26,9 @@ export async function logMiddleware(request: Request, response: Response, next: 
         if (shouldCaptureResponse) {
             url = JSON.parse(responseBody).url
         }
-        console.log('url', url)
         new LogService().LogRegister({
             requestUrl: request.originalUrl,
-            message: response.locals.logMessage || '', 
+            message: response.locals.logMessage || '',
             metadata: {
                 data: request.body || request.query || request.params || {}
             },
@@ -38,7 +36,7 @@ export async function logMiddleware(request: Request, response: Response, next: 
             status: response.statusCode,
             url: url,
             user_id: request.token?.sub || null,
-        });
+        }, request.token);
 
         console.log('[MIDDLEWARE] resposta finalizada:', response.statusCode, request.originalUrl);
     });
